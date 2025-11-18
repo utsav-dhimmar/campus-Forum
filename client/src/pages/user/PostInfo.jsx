@@ -132,7 +132,7 @@ export default function PostInfo() {
                   </small>
                   {canDeleteAnswer && !isDeletedByMod && (
                     <Button
-                      className="btn-sm btn-outline-danger"
+                      className="btn-sm btn-outline-danger m-2"
                       onClick={() => handleAnswerDelete(data._id)}
                       disabled={loading}
                     >
