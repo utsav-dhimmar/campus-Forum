@@ -75,6 +75,9 @@ const deleteAnswer = asyncHandler(async (req, res) => {
 	}
 
 	const answer = await Answer.findById(answerId);
+	if (!answer) {
+		throw new ApiError(400, "no answer found");
+	}
 	// check for author
 	const isAuthor =
 		requestingUser._id.toString() === answer.authorId.toString();
@@ -101,9 +104,7 @@ const deleteAnswer = asyncHandler(async (req, res) => {
 	}
 
 	await Answer.findByIdAndDelete(answerId);
-	if (!answer) {
-		throw new ApiError(400, "no answer found");
-	}
+
 	return res
 		.status(200)
 		.json(new ApiResponse(200, {}, "answer successfully deleted"));
