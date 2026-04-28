@@ -1,7 +1,7 @@
 {
-	"name": "campusforum",
+	"name": "campusForum",
 	"version": "1.0.0",
-	"description": "this is just advance version of my college minor project",
+	"description": "",
 	"main": "index.js",
 	"scripts": {
 		"install:client": "cd client && npm i",
@@ -11,9 +11,8 @@
 		"dev:server": "cd server && npm run dev",
 		"dev:all": "npm run dev:server && npm run dev:client"
 	},
-	"author": "utsav dhimmar",
+	"keywords": [],
+	"author": "",
 	"license": "ISC",
-	"devDependencies": {
-		"concurrently": "^9.2.0"
-	}
+	"packageManager": "pnpm@10.28.0"
 }
