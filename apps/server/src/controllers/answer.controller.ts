@@ -1,4 +1,5 @@
-import { isValidObjectId } from "mongoose";
+import { Request, Response } from "express";
+import { isValidObjectId, Types } from "mongoose";
 import Answer from "../models/answer.model.js";
 import Post from "../models/post.model.js";
 import ApiError from "../utils/ApiError.js";
@@ -6,7 +7,7 @@ import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/AsyncHandler.js";
 import { checkEmpty, validLength } from "../utils/validation.js";
 
-const answerToTheQuestion = asyncHandler(async (req, res) => {
+const answerToTheQuestion = asyncHandler(async (req: Request, res: Response) => {
 	const postId = req.params.postId;
 	const userId = req.user?._id;
 
@@ -16,9 +17,7 @@ const answerToTheQuestion = asyncHandler(async (req, res) => {
 	if (!isValidObjectId(postId)) {
 		throw new ApiError(404, "invalid post id");
 	}
-	/**
-	 * @type {{body:string}}
-	 */
+
 	let { body } = req.body;
 	body = body?.trim();
 
@@ -35,7 +34,6 @@ const answerToTheQuestion = asyncHandler(async (req, res) => {
 	if (!post) {
 		throw new ApiError(404, "no post found");
 	}
-	// post -> replies create
 
 	const answer = await Answer.create({
 		content: body,
@@ -46,7 +44,7 @@ const answerToTheQuestion = asyncHandler(async (req, res) => {
 	return res.status(201).json(new ApiResponse(201, answer, "answer created"));
 });
 
-const getAnswer = asyncHandler(async (req, res) => {
+const getAnswer = asyncHandler(async (req: Request, res: Response) => {
 	const answerId = req.params.answerId;
 	if (!answerId) {
 		throw new ApiError(400, "answerId is required");
@@ -63,12 +61,16 @@ const getAnswer = asyncHandler(async (req, res) => {
 	return res.status(200).json(new ApiResponse(200, answer, "answer found"));
 });
 
-const deleteAnswer = asyncHandler(async (req, res) => {
+const deleteAnswer = asyncHandler(async (req: Request, res: Response) => {
 	const answerId = req.params.answerId;
 	const requestingUser = req.user;
 	if (!answerId) {
 		throw new ApiError(400, "answerId is required");
 	}
+
+  if (!requestingUser) {
+    throw new ApiError(401, "unauthorized");
+  }
 
 	if (!isValidObjectId(answerId)) {
 		throw new ApiError(400, "invalid answerId");
@@ -95,8 +97,8 @@ const deleteAnswer = asyncHandler(async (req, res) => {
 	// mod try to delete
 	if (isModerator && !isAuthor) {
 		answer.content = `[This answer were deleted by, moderator:- ${requestingUser.username}]`;
-		answer.isDeleted = true;
-		answer.deletedBy = requestingUser._id;
+		(answer as any).isDeleted = true;
+		(answer as any).deletedBy = requestingUser._id;
 		await answer.save();
 		return res
 			.status(200)

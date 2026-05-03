@@ -1,9 +1,10 @@
+import { Request, Response } from "express";
 import asyncHandler from "../utils/AsyncHandler.js";
 import User from "../models/user.model.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import ApiError from "../utils/ApiError.js";
 import { isValidObjectId } from "mongoose";
-import { isValidDate, isValidEmail, validLength } from "../utils/validation.js";
+import { isValidEmail, validLength } from "../utils/validation.js";
 import { generateAccessTokenForAdmin } from "../utils/common.js";
 import Post from "../models/post.model.js";
 import Answer from "../models/answer.model.js";
@@ -12,7 +13,7 @@ import { ADMIN } from "../utils/constants.js";
 const ADMIN_EMAIL = ADMIN.ADMIN_EMAIL;
 const ADMIN_PASSWORD = ADMIN.ADMIN_PASSWORD;
 
-const handleLogin = asyncHandler(async (req, res) => {
+const handleLogin = asyncHandler(async (req: Request, res: Response) => {
 	if (!req.body) {
 		throw new ApiError(
 			400,
@@ -25,7 +26,7 @@ const handleLogin = asyncHandler(async (req, res) => {
 	}
 
 	if (!validLength(password, 4)) {
-		throw new ApiError(400, "Password must be eight character long");
+		throw new ApiError(400, "Password must be four character long");
 	}
 
 	if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
@@ -51,7 +52,7 @@ const handleLogin = asyncHandler(async (req, res) => {
 		);
 });
 
-const handleLogout = asyncHandler(async (req, res) => {
+const handleLogout = asyncHandler(async (req: Request, res: Response) => {
 	const incommingToken = req.cookies?.accessToken;
 
 	if (!incommingToken) {
@@ -64,7 +65,7 @@ const handleLogout = asyncHandler(async (req, res) => {
 		.json(new ApiResponse(200, {}, "admin logout successfully"));
 });
 
-const getAllUsers = asyncHandler(async (req, res) => {
+const getAllUsers = asyncHandler(async (_: Request, res: Response) => {
 	const allUsers = await User.aggregate([
 		{
 			$facet: {
@@ -89,7 +90,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
 		.json(new ApiResponse(200, allUsers[0], "users found successfully"));
 });
 
-const getUser = asyncHandler(async (req, res) => {
+const getUser = asyncHandler(async (req: Request, res: Response) => {
 	const userId = req.params.userId;
 	if (!userId) {
 		throw new ApiError(400, "user id not found");
@@ -105,15 +106,15 @@ const getUser = asyncHandler(async (req, res) => {
 	}
 
 	const userObj = user.toObject();
-	delete userObj.password;
-	delete userObj.refreshToken;
+	delete (userObj as any).password;
+	delete (userObj as any).refreshToken;
 
 	return res
 		.status(200)
 		.json(new ApiResponse(200, userObj, "user data fetch successfully"));
 });
 
-const deleteUser = asyncHandler(async (req, res) => {
+const deleteUser = asyncHandler(async (req: Request, res: Response) => {
 	const { userId } = req.params;
 	if (!isValidObjectId(userId)) {
 		throw new ApiError(400, "Invalid user ID");
@@ -125,7 +126,6 @@ const deleteUser = asyncHandler(async (req, res) => {
 		throw new ApiError(404, "User not found");
 	}
 
-	// Also delete posts and answers by this user
 	await Post.deleteMany({ author: userId });
 	await Answer.deleteMany({ author: userId });
 
@@ -140,7 +140,7 @@ const deleteUser = asyncHandler(async (req, res) => {
 		);
 });
 
-const deletePost = asyncHandler(async (req, res) => {
+const deletePost = asyncHandler(async (req: Request, res: Response) => {
 	const { postId } = req.params;
 	if (!isValidObjectId(postId)) {
 		throw new ApiError(400, "Invalid post ID");
@@ -165,7 +165,7 @@ const deletePost = asyncHandler(async (req, res) => {
 		);
 });
 
-const deleteAnswer = asyncHandler(async (req, res) => {
+const deleteAnswer = asyncHandler(async (req: Request, res: Response) => {
 	const { answerId } = req.params;
 	if (!isValidObjectId(answerId)) {
 		throw new ApiError(400, "Invalid answer ID");
@@ -182,30 +182,22 @@ const deleteAnswer = asyncHandler(async (req, res) => {
 		.json(new ApiResponse(200, {}, "Answer deleted successfully"));
 });
 
-const getAnalytics = asyncHandler(async (req, res) => {
+const getAnalytics = asyncHandler(async (req: Request, res: Response) => {
 	const { startDate, endDate } = req.query;
 
 	if (!startDate || !endDate) {
 		throw new ApiError(400, "Both start and end date is required");
 	}
-	const start = new Date(startDate);
-	const end = new Date(endDate);
+	const start = new Date(startDate as string);
+	const end = new Date(endDate as string);
 
 	if (isNaN(start.getTime()) || isNaN(end.getTime())) {
 		throw new ApiError(400, "Invalid date format provided");
 	}
 
-	end.setHours(23, 59, 59, 999); // till mid night
+	end.setHours(23, 59, 59, 999);
 
 	const [newUsers, newPost, newAnswer, topPost] = await Promise.all([
-		// count new user , post and answer between these two date
-		// User.countDocuments({
-		// 	createdAt: {
-		// 		$gte: start,
-		// 		$lte: end,
-		// 	},
-		// }),
-
 		User.aggregate([
 			{
 				$match: {
@@ -249,7 +241,6 @@ const getAnalytics = asyncHandler(async (req, res) => {
 				$lte: end,
 			},
 		}),
-		// top 5 post
 		Answer.aggregate([
 			{
 				$match: {
@@ -261,7 +252,7 @@ const getAnalytics = asyncHandler(async (req, res) => {
 			},
 			{
 				$group: {
-					_id: "$postId", // NOOB
+					_id: "$postId",
 					answerCount: { $sum: 1 },
 				},
 			},
@@ -316,16 +307,14 @@ const getAnalytics = asyncHandler(async (req, res) => {
 		.json(new ApiResponse(200, analyticsData, "Data Fetch successfully"));
 });
 
-const updateUserRole = asyncHandler(async (req, res) => {
+const updateUserRole = asyncHandler(async (req: Request, res: Response) => {
 	const { userId } = req.params;
-	// console.log(req.body);
-	if (Object.keys(req.body).length === 0 && req.body.constructor === Object) {
+	if (!req.body || (Object.keys(req.body).length === 0 && req.body.constructor === Object)) {
 		throw new ApiError(400, "Role is missing");
 	}
 
 	let { role } = req.body;
-	role = role.toUpperCase();
-	// can be user or moderator
+	role = (role as string).toUpperCase();
 	if (!role || !["USER", "MODERATOR"].includes(role)) {
 		throw new ApiError(400, "Invalid role");
 	}
@@ -350,23 +339,9 @@ const updateUserRole = asyncHandler(async (req, res) => {
 		.json(new ApiResponse(200, updatedUser, "User role updated"));
 });
 
-// const getAllPost = asyncHandler((req, res) => {
-// 	return res.status(200).json({
-// 		message: "Hi",
-// 	});
-// });
-
-// const getPost = asyncHandler((req, res) => {
-// 	return res.status(200).json({
-// 		message: "Hi",
-// 	});
-// });
-
 export {
 	getAllUsers,
 	getUser,
-	// getAllPost,
-	// getPost,
 	handleLogin,
 	handleLogout,
 	deleteUser,

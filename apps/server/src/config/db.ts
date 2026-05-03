@@ -1,14 +1,14 @@
 import { connect } from "mongoose";
-
+import { parsedEnv } from "../schemas/env.js";
 const connectDB = async () => {
-	console.log(process.env.MONGODB_URI);
 	try {
-		await connect(process.env.MONGODB_URI, {
+		const uri = parsedEnv.MONGODB_URI;
+		await connect(uri, {
 			dbName: "campusForum",
 		});
 		console.log(`mongoDB connected successfully :)`);
-	} catch (error) {
-		console.log(`DB connection failed \n ${error} \n ${error.message}`);
+	} catch (error: any) {
+		console.log(`DB connection failed \n ${error} \n ${error?.message}`);
 		process.exit(1);
 	}
 };

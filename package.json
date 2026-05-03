@@ -6,7 +6,7 @@
 	"private": true,
 	"scripts": {
 		"preinstall": "npx only-allow pnpm",
-		"dev": "pnpm -r run dev",
+		"dev": "pnpm -r --parallel run dev",
 		"install:client": "cd client && npm i",
 		"install:server": "cd server && npm i",
 		"install:all": "npm run install:client && npm run install:server"

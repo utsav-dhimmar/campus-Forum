@@ -1,3 +1,4 @@
+import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 import ApiError from "../utils/ApiError.js";
@@ -5,14 +6,12 @@ import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/AsyncHandler.js";
 import { generateAccessAndRefreshToken } from "../utils/common.js";
 import { checkEmpty, isValidEmail, validLength } from "../utils/validation.js";
-import { isValidObjectId } from "mongoose";
+import { isValidObjectId, Types } from "mongoose";
 import Answer from "../models/answer.model.js";
 import Post from "../models/post.model.js";
+import { parsedEnv } from "../schemas/env.js";
 
-const signUp = asyncHandler(async (req, res) => {
-	/**
-	 * @type {{username:string,email:string,password:string}}
-	 */
+const signUp = asyncHandler(async (req: Request, res: Response) => {
 	if (!req.body) {
 		throw new ApiError(400, "All fields are reqired");
 	}
@@ -61,17 +60,14 @@ const signUp = asyncHandler(async (req, res) => {
 		throw new ApiError(400, "Unable to create user");
 	}
 	const userObj = newUser.toObject();
-	delete userObj.password;
+	delete (userObj as any).password;
 
 	return res
 		.status(201)
 		.json(new ApiResponse(201, userObj, "User create successfully"));
 });
 
-const login = asyncHandler(async (req, res) => {
-	/**
-	 * @type {{email:string,password:string}}
-	 */
+const login = asyncHandler(async (req: Request, res: Response) => {
 	const { email, password } = req.body;
 
 	if (checkEmpty(email) || checkEmpty(password) || !email || !password) {
@@ -99,13 +95,13 @@ const login = asyncHandler(async (req, res) => {
 	}
 
 	const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
-		user._id,
+		user._id as Types.ObjectId,
 	);
 
 	const userObj = user.toObject();
 
-	delete userObj.password;
-	delete userObj?.refreshToken;
+	delete (userObj as any).password;
+	delete (userObj as any).refreshToken;
 
 	return res
 		.status(200)
@@ -122,8 +118,7 @@ const login = asyncHandler(async (req, res) => {
 		.json(new ApiResponse(200, userObj, "user Logged in successfully"));
 });
 
-const logout = asyncHandler(async (req, res) => {
-	// only authentic users -> middlewares
+const logout = asyncHandler(async (req: Request, res: Response) => {
 	const userId = req.user?._id;
 
 	if (!userId) {
@@ -134,7 +129,7 @@ const logout = asyncHandler(async (req, res) => {
 		userId,
 		{
 			$set: {
-				refreshToken: 1,
+				refreshToken: "",
 			},
 		},
 		{
@@ -154,7 +149,7 @@ const logout = asyncHandler(async (req, res) => {
 		.json(new ApiResponse(200, {}, "user logout successfully"));
 });
 
-const getUserInfo = asyncHandler(async (req, res) => {
+const getUserInfo = asyncHandler(async (req: Request, res: Response) => {
 	const userId = req.user?._id;
 
 	if (!userId) {
@@ -177,13 +172,11 @@ const getUserInfo = asyncHandler(async (req, res) => {
 		.json(new ApiResponse(200, user, "user data fetch successfully"));
 });
 
-const newRefreshToken = asyncHandler(async (req, res) => {
-	// get old refresh token based on that token generate new refresh token
-
+const newRefreshToken = asyncHandler(async (req: Request, res: Response) => {
 	try {
 		const incommingRefreshToken =
 			req.cookies?.refreshToken ||
-			req.headers.authorization?.replace("Bearer", "");
+			req.headers.authorization?.replace("Bearer", "").trim();
 
 		if (!incommingRefreshToken) {
 			throw new ApiError(
@@ -192,11 +185,10 @@ const newRefreshToken = asyncHandler(async (req, res) => {
 			);
 		}
 
-		// invalid -> throw error
 		const userInfo = jwt.verify(
 			incommingRefreshToken,
-			process.env.REFRESH_TOKEN,
-		);
+			parsedEnv.REFRESH_TOKEN
+		) as { _id: string };
 
 		if (!userInfo) {
 			throw new ApiError(
@@ -218,7 +210,7 @@ const newRefreshToken = asyncHandler(async (req, res) => {
 		}
 
 		const { accessToken, refreshToken } =
-			await generateAccessAndRefreshToken(user._id);
+			await generateAccessAndRefreshToken(user._id as Types.ObjectId);
 
 		return res
 			.status(200)
@@ -236,10 +228,11 @@ const newRefreshToken = asyncHandler(async (req, res) => {
 	} catch (error) {
 		console.error(`Error while generating new refresh token`);
 		console.log(error);
+		throw new ApiError(401, "invalid refresh token");
 	}
 });
 
-const getMyPost = asyncHandler(async (req, res) => {
+const getMyPost = asyncHandler(async (req: Request, res: Response) => {
 	const userId = req.user?._id;
 
 	if (!userId) {
@@ -261,7 +254,7 @@ const getMyPost = asyncHandler(async (req, res) => {
 		.json(new ApiResponse(200, posts, "User posts fetched successfully"));
 });
 
-const deletePost = asyncHandler(async (req, res) => {
+const deletePost = asyncHandler(async (req: Request, res: Response) => {
 	const userId = req.user?._id;
 	const { postId } = req.params;
 
@@ -290,7 +283,7 @@ const deletePost = asyncHandler(async (req, res) => {
 		.json(new ApiResponse(200, {}, "Post deleted successfully"));
 });
 
-const getMyAnswers = asyncHandler(async (req, res) => {
+const getMyAnswers = asyncHandler(async (req: Request, res: Response) => {
 	const userId = req.user?._id;
 
 	if (!userId) {
@@ -316,10 +309,10 @@ const getMyAnswers = asyncHandler(async (req, res) => {
 		body: answer.content,
 
 		post: {
-			_id: answer.postId._id,
+			_id: (answer.postId as any)._id,
 		},
-		createdAt: answer.createdAt,
-		updatedAt: answer.updatedAt,
+		createdAt: answer.createdAt!,
+		updatedAt: answer.updatedAt!,
 	}));
 
 	return res

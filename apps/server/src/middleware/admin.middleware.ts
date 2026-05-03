@@ -1,13 +1,12 @@
+import { Request, Response, NextFunction } from "express";
 import ApiError from "../utils/ApiError.js";
 import jwt from "jsonwebtoken";
-
 import { ADMIN } from "../utils/constants.js";
+import { parsedEnv } from "../schemas/env.js";
 
 const ADMIN_EMAIL = ADMIN.ADMIN_EMAIL;
-const ADMIN_PASSWORD = ADMIN.ADMIN_PASSWORD;
 
-const adminMiddleware = (req, res, next) => {
-	// console.log("at middleware", req.originalUrl, req.method);
+const adminMiddleware = (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const incommingAccessToken =
 			req.cookies?.accessToken ||
@@ -18,14 +17,14 @@ const adminMiddleware = (req, res, next) => {
 		}
 		const user = jwt.verify(
 			incommingAccessToken,
-			process.env.REFRESH_TOKEN,
-		);
+			parsedEnv.REFRESH_TOKEN
+		) as { email: string };
 
 		if (user.email !== ADMIN_EMAIL) {
 			throw new ApiError(401, "unautorized access , invalid email");
 		}
 		next();
-	} catch (error) {
+	} catch (error: any) {
 		throw new ApiError(401, error.message || "invalid access token");
 	}
 };

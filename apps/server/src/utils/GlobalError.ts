@@ -1,13 +1,12 @@
+import { NextFunction, Request, Response } from "express";
 import ApiError from "./ApiError.js";
 
-/**
- *
- * @param {} error
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
- */
-export default function GlobalErrorHandler(error, _, res, next) {
+export default function GlobalErrorHandler(
+	error: any,
+	_: Request,
+	res: Response,
+	_next: NextFunction,
+) {
 	console.log(error);
 	const statusCode = error instanceof ApiError ? error.statusCode : 500;
 	const message =

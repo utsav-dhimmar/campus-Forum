@@ -1,6 +1,11 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Document, Types } from "mongoose";
+import { IAnswer } from "@repo/shared";
 
-const schema = new Schema(
+export interface IAnswerDocument extends Omit<IAnswer, "_id">, Document {
+  _id: Types.ObjectId;
+}
+
+const schema = new Schema<IAnswerDocument>(
 	{
 		authorId: {
 			type: Schema.Types.ObjectId,
@@ -18,14 +23,13 @@ const schema = new Schema(
 			required: true,
 			trim: true,
 		},
-		// mods
 		isDeleted: {
 			type: Boolean,
 			default: false,
 		},
 		deletedBy: {
 			type: Schema.Types.ObjectId,
-			ref: "users",
+			ref: "User",
 		},
 	},
 	{
@@ -33,6 +37,6 @@ const schema = new Schema(
 	},
 );
 
-const Answer = model("Answer", schema);
+const Answer = model<IAnswerDocument>("Answer", schema);
 
 export default Answer;

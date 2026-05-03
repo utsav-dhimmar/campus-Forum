@@ -1,13 +1,12 @@
-import User from "../models/user.model.js";
+import User, { IUserDocument } from "../models/user.model.js";
 import ApiError from "../utils/ApiError.js";
 import asyncHandler from "../utils/AsyncHandler.js";
 import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
+import { parsedEnv } from "../schemas/env.js";
 
-const authMiddleware = asyncHandler(async (req, _, next) => {
+const authMiddleware = asyncHandler(async (req: Request, _, next: NextFunction) => {
 	try {
-		/**
-		 * @type {string}
-		 */
 		const incommingAccessToken =
 			req.cookies?.accessToken ||
 			req.headers.authorization?.replace("Bearer ", "");
@@ -16,19 +15,17 @@ const authMiddleware = asyncHandler(async (req, _, next) => {
 			throw new ApiError(401, "unautorized access token not found");
 		}
 
-		const user = jwt.verify(incommingAccessToken, process.env.ACCESS_TOKEN);
-		const isUser = await User.findById(user._id)
-			.select("-password -refreshToken")
-			.lean();
+		const decoded = jwt.verify(incommingAccessToken, parsedEnv.ACCESS_TOKEN) as { _id: string };
+		const isUser = await User.findById(decoded._id)
+			.select("-password -refreshToken");
+
 		if (!isUser) {
 			throw new ApiError(404, "user not found");
 		}
-		req.user = isUser;
+		req.user = isUser as IUserDocument;
 		next();
-	} catch (error) {
-		// return next(
+	} catch (error: any) {
 		throw new ApiError(401, error.message || "invalid refresh token");
-		// );
 	}
 });
 

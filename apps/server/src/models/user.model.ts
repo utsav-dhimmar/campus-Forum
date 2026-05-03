@@ -1,8 +1,17 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Document, Types } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { IUser } from "@repo/shared";
+import { parsedEnv } from "../schemas/env.js";
 
-const schema = new Schema(
+export interface IUserDocument extends Omit<IUser, "_id">, Document {
+	_id: Types.ObjectId;
+	comparePassword(password: string): Promise<boolean>;
+	generateRefreshToken(): string;
+	generateAccessToken(): string;
+}
+
+const schema = new Schema<IUserDocument>(
 	{
 		username: {
 			type: String,
@@ -22,8 +31,6 @@ const schema = new Schema(
 		},
 		department: {
 			type: String,
-			// unique: true,
-			// required: true,
 		},
 		password: {
 			type: String,
@@ -43,27 +50,20 @@ const schema = new Schema(
 );
 
 schema.pre("save", async function (next) {
-	// create hash when password is modify
-
-	if (!this.isModified("password")) next();
+	if (!this.isModified("password")) return next();
 
 	try {
-		this.password = await bcrypt.hash(this.password, 10);
+		this.password = await bcrypt.hash(this.password as string, 10);
 		next();
 	} catch (error) {
 		console.error("unable to hash user password");
 		console.error(error);
-		next();
+		next(error as Error);
 	}
 });
 
-/**
- *
- * @param {string} incommingPassword
- * @returns {Promise<boolean>}
- */
-schema.methods.comparePassword = async function (incommingPassword) {
-	return await bcrypt.compare(incommingPassword, this.password);
+schema.methods.comparePassword = async function (incommingPassword: string) {
+	return await bcrypt.compare(incommingPassword, this.password as string);
 };
 
 schema.methods.generateRefreshToken = function () {
@@ -74,14 +74,15 @@ schema.methods.generateRefreshToken = function () {
 				email: this.email,
 				username: this.username,
 			},
-			process.env.REFRESH_TOKEN,
+			parsedEnv.REFRESH_TOKEN,
 			{
-				expiresIn: process.env.REFRESH_TOKEN_EXP,
+				expiresIn: parsedEnv.REFRESH_TOKEN_EXP as any,
 			},
 		);
 	} catch (error) {
 		console.error("unable to generate refresh token");
 		console.error(error);
+		return "";
 	}
 };
 
@@ -91,17 +92,18 @@ schema.methods.generateAccessToken = function () {
 			{
 				_id: this._id,
 			},
-			process.env.ACCESS_TOKEN,
+			parsedEnv.ACCESS_TOKEN,
 			{
-				expiresIn: process.env.ACCESS_TOKEN_EXP,
+				expiresIn: parsedEnv.ACCESS_TOKEN_EXP as any,
 			},
 		);
 	} catch (error) {
 		console.error("unable to generate access token");
 		console.error(error);
+		return "";
 	}
 };
 
-const User = model("User", schema);
+const User = model<IUserDocument>("User", schema);
 
 export default User;
