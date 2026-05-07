@@ -1,15 +1,22 @@
+import answerService from "@/services/answer.services";
 import { useState } from "react";
-import { Navigate } from "react-router";
-import answerService from "../services/answer.services";
 import AlertMessage from "./AlertMessage";
 
-export default function InlineAnswerBox({ postId, onAnswerSubmit }) {
+type InlineAnswerBoxProps = {
+  postId: string;
+  onAnswerSubmit: () => void;
+};
+
+export default function InlineAnswerBox({
+  postId,
+  onAnswerSubmit,
+}: InlineAnswerBoxProps) {
   const [content, setContent] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [validationError, setValidationError] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (content.trim().length < 10) {
@@ -22,22 +29,26 @@ export default function InlineAnswerBox({ postId, onAnswerSubmit }) {
     setValidationError("");
 
     try {
-      const res = await answerService.postAnswer({
-        postId: postId,
-        answerBody: { body: content },
+      // @ts-ignore
+      const res = await answerService.postAnswer(postId, {
+        body: content,
       });
       setMessage("");
       setContent("");
       onAnswerSubmit();
     } catch (error) {
-      setMessage(error.message || "Failed to post answer.");
+      setMessage(
+        (error instanceof Error && error.message) || "Failed to post answer.",
+      );
       // alert(error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleContentChange = (e) => {
+  const handleContentChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement, HTMLTextAreaElement>,
+  ) => {
     setContent(e.target.value);
 
     if (validationError) {
@@ -57,7 +68,7 @@ export default function InlineAnswerBox({ postId, onAnswerSubmit }) {
             className={`form-control ${
               validationError ? "border-danger" : "border-primary"
             }`}
-            rows="3"
+            rows={3}
             placeholder="Write your answer..."
             value={content}
             onChange={handleContentChange}

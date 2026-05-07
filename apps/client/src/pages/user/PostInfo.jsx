@@ -128,7 +128,7 @@ export default function PostInfo() {
                 <div className="card-body">
                   <p className="mb-1">{data.content}</p>
                   <small className="text-muted">
-                    — {data.autherInfo?.username}
+                    — {data.authorInfo?.username}
                   </small>
                   {canDeleteAnswer && !isDeletedByMod && (
                     <Button

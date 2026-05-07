@@ -60,7 +60,7 @@ export default function PostDetails() {
               <div className="card-body">
                 <p className="mb-1">{data.content}</p>
                 <small className="text-muted">
-                  — {data.autherInfo?.username}
+                  — {data.authorInfo?.username}
                 </small>
                 <div>
                   <Button

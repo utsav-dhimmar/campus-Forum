@@ -6,7 +6,7 @@ import {
   PostDetails,
   UserDetails,
 } from "../pages/admin";
-import { data, Outlet, Route, useLocation, useNavigate } from "react-router";
+import { Outlet, Route, useLocation, useNavigate } from "react-router";
 import { useAuth } from "../context/User.context";
 import { useEffect } from "react";
 
@@ -20,7 +20,7 @@ export default function AdminProtected() {
   useEffect(() => {
     if (!isAuthenticate) {
       navigate("/", { replace: true });
-    } else if (isAuthenticate && userData?.role !== "admin") {
+    } else if (isAuthenticate && userData?.role?.toLowerCase() !== "admin") {
       navigate("/", { replace: true });
     } else if (isAuthenticate && pathname === "/admin-login") {
       navigate("/admin", { replace: true });

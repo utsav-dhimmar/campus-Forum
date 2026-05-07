@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Input, Button, AlertMessage, AuthNavigation } from "../../components";
 import { useAuth } from "../../context/User.context";
 import authService from "../../services/auth.services";
+import { useNavigate } from "react-router";
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const [userData, setUserData] = useState({
     email: "",
@@ -41,7 +43,7 @@ export default function LoginPage() {
     return !newErrors.email && !newErrors.password;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setMessage("");
@@ -54,20 +56,23 @@ export default function LoginPage() {
       await authService
         .login(userData)
         .then((data) =>
-          login({ _id: data._id, username: data.username, role: data.role })
+          login({ _id: data._id, username: data.username, role: data.role }),
         )
         .then(() => navigate("/"))
         .catch((reason) => setMessage(reason.message));
     } catch (error) {
       console.log(error);
       setMessage(
-        error.message || "An unexpected error occurred. Please try again."
+        (error instanceof Error && error.message) ||
+          "An unexpected error occurred. Please try again.",
       );
       // alert(error.message);
     }
   };
 
-  const handleEmailChange = (e) => {
+  const handleEmailChange = (
+    e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
+  ) => {
     const email = e.target.value;
     setUserData((prevData) => ({ ...prevData, email }));
 
@@ -76,7 +81,9 @@ export default function LoginPage() {
     }
   };
 
-  const handlePasswordChange = (e) => {
+  const handlePasswordChange = (
+    e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
+  ) => {
     const password = e.target.value;
     setUserData((prevData) => ({ ...prevData, password }));
 

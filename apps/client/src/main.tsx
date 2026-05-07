@@ -6,24 +6,24 @@ import {
   Route,
   RouterProvider,
 } from "react-router";
-import App from "./App.jsx";
+import App from "./App.js";
 import "./index.css";
-import { UserProvider } from "./providers/User.Provider.jsx";
+import { UserProvider } from "./providers/User.Provider.js";
 
-import { AuthComponent, GuestOnly } from "./components";
+import { AuthComponent, GuestOnly } from "./components/index.js";
 import {
   AboutMe,
   HomePage,
   HomePageForVisiters,
   LoginPage,
+  MyAnswer,
+  MyPost,
   PostInfo,
   RaiseQuery,
   SignUpPage,
-  MyPost,
-  MyAnswer,
-} from "./pages/user";
+} from "./pages/user/index.js";
 
-import { adminRoutes } from "./routes/adminRoutes.jsx";
+import { adminRoutes } from "./routes/adminRoutes.js";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -51,14 +51,14 @@ const router = createBrowserRouter(
         </Route>
         {adminRoutes}
       </Route>
-    </>
-  )
+    </>,
+  ),
 );
 // console.log(router.state);
-createRoot(document.getElementById("root")).render(
+createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
     <UserProvider>
       <RouterProvider router={router} />
     </UserProvider>
-  </StrictMode>
+  </StrictMode>,
 );

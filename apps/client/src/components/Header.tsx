@@ -1,9 +1,11 @@
+import { useAuth } from "@/context/User.context.ts";
+import authService from "@/services/auth.services.ts";
 import { Link } from "react-router";
-import { useAuth } from "../context/User.context.js";
-import authService from "../services/auth.services.js";
-import Button from "./Button.jsx";
+import Button from "./Button.tsx";
 
-function Logout({ onClick }) {
+type LogoutProps = { onClick: () => void };
+
+function Logout({ onClick }: LogoutProps) {
 	return (
 		<Button
 			type="button"

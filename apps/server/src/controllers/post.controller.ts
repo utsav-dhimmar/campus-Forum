@@ -95,7 +95,7 @@ const getPost = asyncHandler(async (req: Request, res: Response) => {
 					{
 						$lookup: {
 							from: "users",
-							as: "autherInfo",
+							as: "authorInfo",
 							localField: "authorId",
 							foreignField: "_id",
 							pipeline: [
@@ -108,7 +108,7 @@ const getPost = asyncHandler(async (req: Request, res: Response) => {
 						},
 					},
 					{
-						$unwind: "$autherInfo",
+						$unwind: "$authorInfo",
 					},
 				],
 			},
@@ -125,7 +125,7 @@ const getPost = asyncHandler(async (req: Request, res: Response) => {
 							$map: {
 								input: "$answers",
 								as: "answer",
-								in: "$$answer.autherInfo._id",
+								in: "$$answer.authorInfo._id",
 							},
 						},
 					],

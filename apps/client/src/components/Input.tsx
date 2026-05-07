@@ -1,13 +1,14 @@
-/**
- *
- * @param {{
- *  label?:string
- *  divClassName?:string
- *  inputClassName?:string
- * }
- * & import("react").InputHTMLAttributes<HTMLInputElement>} props
- */
-export default function Input(props) {
+type InputProps = {
+  label: string;
+  type: React.InputHTMLAttributes<HTMLInputElement>["type"];
+  divClassName?: string;
+  inputClassName?: string;
+} & React.DetailedHTMLProps<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
+>;
+
+export default function Input(props: InputProps) {
   const {
     label,
     type = "text",

@@ -71,7 +71,9 @@ export default function Register() {
     return !newErrors.username && !newErrors.email && !newErrors.password;
   };
 
-  const handleUsernameChnage = (e) => {
+  const handleUsernameChnage = (
+    e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
+  ) => {
     const username = e.target.value;
     setUserData((prevData) => ({ ...prevData, username }));
 
@@ -80,7 +82,9 @@ export default function Register() {
     }
   };
 
-  const handleEmailChange = (e) => {
+  const handleEmailChange = (
+    e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
+  ) => {
     const email = e.target.value;
     setUserData((prevData) => ({ ...prevData, email }));
 
@@ -89,7 +93,9 @@ export default function Register() {
     }
   };
 
-  const handlePasswordChange = (e) => {
+  const handlePasswordChange = (
+    e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
+  ) => {
     const password = e.target.value;
     setUserData((prevData) => ({ ...prevData, password }));
 
@@ -98,10 +104,7 @@ export default function Register() {
     }
   };
 
-  /**
-   * @param {React.FormEvent<HTMLFormElement>} e
-   */
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setMessage("");
@@ -119,7 +122,8 @@ export default function Register() {
     } catch (error) {
       console.log(error);
       setMessage(
-        error.message || "An unexpected error occurred. Please try again."
+        (error instanceof Error && error.message) ||
+          "An unexpected error occurred. Please try again.",
       );
       // alert(error.message);
     }
