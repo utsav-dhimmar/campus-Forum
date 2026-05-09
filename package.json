@@ -1,18 +1,26 @@
 {
-	"name": "campusForum",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
-	"private": true,
-	"scripts": {
-		"preinstall": "npx only-allow pnpm",
-		"dev": "pnpm -r run dev",
-		"install:client": "cd client && npm i",
-		"install:server": "cd server && npm i",
-		"install:all": "npm run install:client && npm run install:server"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"packageManager": "pnpm@10.28.0"
+  "name": "campusForum",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "main": "index.js",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "dev": "pnpm -r --parallel run dev",
+    "install:client": "cd client && npm i",
+    "install:server": "cd server && npm i",
+    "install:all": "pnpm run install:client && pnpm run install:server",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check"
+  },
+  "devDependencies": {
+    "oxfmt": "^0.48.0",
+    "oxlint": "^1.63.0"
+  },
+  "packageManager": "pnpm@10.28.0"
 }

@@ -1,11 +1,11 @@
 # project
 
 - [project](#project)
-    - [description](#description)
-    - [Pages](#pages)
-    - [backend routes](#backend-routes)
-    - [possible DB Schema](#possible-db-schema)
-    - [future enhancement](#future-enhancement)
+  - [description](#description)
+  - [Pages](#pages)
+  - [backend routes](#backend-routes)
+  - [possible DB Schema](#possible-db-schema)
+  - [future enhancement](#future-enhancement)
 
 Campus Forum / College Forum
 
@@ -39,25 +39,25 @@ Campus Forum / College Forum
 ## possible DB Schema
 
 1. user
-    1. \_id
-    2. username
-    3. email
-    4. password
-    5. department
-    6. refreshToken
+   1. \_id
+   2. username
+   3. email
+   4. password
+   5. department
+   6. refreshToken
 2. question / post
-    1. \_id
-    2. question
-    3. author / user
+   1. \_id
+   2. question
+   3. author / user
 3. Replies
-    1. \_id
-    2. author
-    3. post \_id
+   1. \_id
+   2. author
+   3. post \_id
 
 ## future enhancement
 
 1. More features like
-    1. question upvoting
-    2. Mark as complete
-    3. Auto close discussion after some time
+   1. question upvoting
+   2. Mark as complete
+   3. Auto close discussion after some time
 2. Moderation in forum

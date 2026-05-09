@@ -12,3 +12,4 @@ client/node_modules
 
 
 **/.vscode
+**/dist
