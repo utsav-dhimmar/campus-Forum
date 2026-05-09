@@ -1,14 +1,14 @@
 import { Router } from "express";
 import {
-	getAllUsers,
-	getUser,
-	handleLogin,
-	handleLogout,
-	deleteUser,
-	deletePost,
-	deleteAnswer,
-	getAnalytics,
-	updateUserRole,
+  getAllUsers,
+  getUser,
+  handleLogin,
+  handleLogout,
+  deleteUser,
+  deletePost,
+  deleteAnswer,
+  getAnalytics,
+  updateUserRole,
 } from "../controllers/admin.controller.js";
 import { getAllPost, getPost } from "../controllers/post.controller.js";
 import adminMiddleware from "../middleware/admin.middleware.js";

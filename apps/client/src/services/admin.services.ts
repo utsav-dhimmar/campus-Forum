@@ -1,13 +1,44 @@
+import type { IUser, UserLogin, IPost, IPostDetails } from "@repo/shared";
+
+export interface IAdminLoginResponse {
+  email: string;
+}
+
+export interface IGetAllUsersResponse {
+  users: IUser[];
+  totalUsers: Array<{ count: number }>;
+}
+
+export interface IAnalyticsResponse {
+  dateRange: {
+    start: string;
+    end: string;
+  };
+  users: {
+    newUsers: any[];
+  };
+  posts: {
+    newPost: number;
+  };
+  answer: {
+    newAnswer: number;
+  };
+  topPostData: {
+    topPost: any[];
+  };
+}
+
 class AdminService {
+  BASE_URL: string;
   constructor() {
     this.BASE_URL = "/api";
   }
 
   /**
    *
-   * @param {{email:string,password:string}} loginData
+   * @param {UserLogin} loginData
    */
-  async login(loginData) {
+  async login(loginData: UserLogin): Promise<IAdminLoginResponse> {
     try {
       const res = await fetch(`${this.BASE_URL}/admin/login`, {
         body: JSON.stringify(loginData),
@@ -27,7 +58,7 @@ class AdminService {
     }
   }
 
-  async logout() {
+  async logout(): Promise<{}> {
     try {
       const res = await fetch(`${this.BASE_URL}/admin/logout`, {
         method: "POST",
@@ -47,7 +78,7 @@ class AdminService {
     }
   }
 
-  async getAllUsers() {
+  async getAllUsers(): Promise<IGetAllUsersResponse> {
     try {
       const res = await fetch(`${this.BASE_URL}/admin/users`, {
         method: "GET",
@@ -72,7 +103,7 @@ class AdminService {
    * @param {string} userId
    * @returns
    */
-  async getUserInfo(userId) {
+  async getUserInfo(userId: string): Promise<IUser> {
     try {
       const res = await fetch(`${this.BASE_URL}/admin/users/${userId}`, {
         method: "GET",
@@ -92,7 +123,7 @@ class AdminService {
     }
   }
 
-  async getAllPosts() {
+  async getAllPosts(): Promise<IPost[]> {
     try {
       const res = await fetch(`${this.BASE_URL}/admin/posts`, {
         method: "GET",
@@ -117,7 +148,7 @@ class AdminService {
    * @param {string} postId
    * @returns
    */
-  async getPostById(postId) {
+  async getPostById(postId: string): Promise<IPostDetails> {
     try {
       const res = await fetch(`${this.BASE_URL}/admin/posts/${postId}`, {
         method: "GET",
@@ -137,7 +168,7 @@ class AdminService {
     }
   }
 
-  async deleteUser(userId) {
+  async deleteUser(userId: string): Promise<{}> {
     try {
       const res = await fetch(`${this.BASE_URL}/admin/users/${userId}`, {
         method: "DELETE",
@@ -157,7 +188,7 @@ class AdminService {
     }
   }
 
-  async deletePost(postId) {
+  async deletePost(postId: string): Promise<{}> {
     try {
       const res = await fetch(`${this.BASE_URL}/admin/posts/${postId}`, {
         method: "DELETE",
@@ -177,7 +208,7 @@ class AdminService {
     }
   }
 
-  async deleteAnswer(answersId) {
+  async deleteAnswer(answersId: string): Promise<{}> {
     try {
       const res = await fetch(`${this.BASE_URL}/admin/answers/${answersId}`, {
         method: "DELETE",
@@ -196,7 +227,7 @@ class AdminService {
       throw error;
     }
   }
-  async updateUserRole(userId, roleData) {
+  async updateUserRole(userId: string, roleData: { role: string }): Promise<IUser> {
     try {
       const res = await fetch(`${this.BASE_URL}/admin/users/${userId}/role`, {
         body: JSON.stringify(roleData),
@@ -215,7 +246,7 @@ class AdminService {
       throw error;
     }
   }
-  async getAnalytics(date) {
+  async getAnalytics(date: { startDate: string; endDate: string }): Promise<IAnalyticsResponse> {
     try {
       const res = await fetch(
         `${this.BASE_URL}/admin/analytics?startDate=${date.startDate}&endDate=${date.endDate}`,
@@ -225,7 +256,7 @@ class AdminService {
             "Content-Type": "application/json",
           },
           credentials: "include",
-        }
+        },
       );
       const data = await res.json();
       if (!res.ok || !data.success) {

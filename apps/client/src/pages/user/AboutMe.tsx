@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import authService from "../../services/auth.services";
-import { Loading } from "../../components";
+import authService from "@/services/auth.services";
+import { Loading } from "@/components";
+import type { IUser } from "@repo/shared";
 
 export default function AboutMe() {
-  const [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState<IUser | null>(null);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -14,7 +15,9 @@ export default function AboutMe() {
         const res = await authService.getUserInfo();
         setUserData(res);
       } catch (error) {
-        setMessage(error.message || "Could not fetch user information.");
+        setMessage(
+          (error instanceof Error && error.message) || "Could not fetch user information.",
+        );
       } finally {
         setLoading(false);
       }
@@ -36,7 +39,7 @@ export default function AboutMe() {
             </div>
           )}
 
-          {!loading && !message && Object.keys(userData).length > 0 && (
+          {!loading && !message && userData && Object.keys(userData).length > 0 && (
             <div className="card shadow-sm">
               <div className="card-header">User Profile</div>
               <div className="card-body">

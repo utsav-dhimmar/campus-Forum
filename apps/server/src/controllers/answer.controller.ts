@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { isValidObjectId, Types } from "mongoose";
+import { isValidObjectId } from "mongoose";
 import Answer from "../models/answer.model.js";
 import Post from "../models/post.model.js";
 import ApiError from "../utils/ApiError.js";
@@ -8,108 +8,100 @@ import asyncHandler from "../utils/AsyncHandler.js";
 import { checkEmpty, validLength } from "../utils/validation.js";
 
 const answerToTheQuestion = asyncHandler(async (req: Request, res: Response) => {
-	const postId = req.params.postId;
-	const userId = req.user?._id;
+  const postId = req.params.postId;
+  const userId = req.user?._id;
 
-	if (!postId) {
-		throw new ApiError(400, "postid is required");
-	}
-	if (!isValidObjectId(postId)) {
-		throw new ApiError(404, "invalid post id");
-	}
+  if (!postId) {
+    throw new ApiError(400, "postid is required");
+  }
+  if (!isValidObjectId(postId)) {
+    throw new ApiError(404, "invalid post id");
+  }
 
-	let { body } = req.body;
-	body = body?.trim();
+  let { body } = req.body;
+  body = body?.trim();
 
-	if (checkEmpty(body) || !body) {
-		throw new ApiError(400, "post can not be empty");
-	}
+  if (checkEmpty(body) || !body) {
+    throw new ApiError(400, "post can not be empty");
+  }
 
-	if (!validLength(body, 10)) {
-		throw new ApiError(401, "post must have at least 10 characters");
-	}
+  if (!validLength(body, 10)) {
+    throw new ApiError(401, "post must have at least 10 characters");
+  }
 
-	const post = await Post.findById(postId);
+  const post = await Post.findById(postId);
 
-	if (!post) {
-		throw new ApiError(404, "no post found");
-	}
+  if (!post) {
+    throw new ApiError(404, "no post found");
+  }
 
-	const answer = await Answer.create({
-		content: body,
-		authorId: userId,
-		postId: postId,
-	});
+  const answer = await Answer.create({
+    content: body,
+    authorId: userId,
+    postId: postId,
+  });
 
-	return res.status(201).json(new ApiResponse(201, answer, "answer created"));
+  return res.status(201).json(new ApiResponse(201, answer, "answer created"));
 });
 
 const getAnswer = asyncHandler(async (req: Request, res: Response) => {
-	const answerId = req.params.answerId;
-	if (!answerId) {
-		throw new ApiError(400, "answerId is required");
-	}
+  const answerId = req.params.answerId;
+  if (!answerId) {
+    throw new ApiError(400, "answerId is required");
+  }
 
-	if (!isValidObjectId(answerId)) {
-		throw new ApiError(400, "invalid answerId");
-	}
-	const answer = await Answer.findById(answerId);
+  if (!isValidObjectId(answerId)) {
+    throw new ApiError(400, "invalid answerId");
+  }
+  const answer = await Answer.findById(answerId);
 
-	if (!answer) {
-		throw new ApiError(400, "no answer found");
-	}
-	return res.status(200).json(new ApiResponse(200, answer, "answer found"));
+  if (!answer) {
+    throw new ApiError(400, "no answer found");
+  }
+  return res.status(200).json(new ApiResponse(200, answer, "answer found"));
 });
 
 const deleteAnswer = asyncHandler(async (req: Request, res: Response) => {
-	const answerId = req.params.answerId;
-	const requestingUser = req.user;
-	if (!answerId) {
-		throw new ApiError(400, "answerId is required");
-	}
+  const answerId = req.params.answerId;
+  const requestingUser = req.user;
+  if (!answerId) {
+    throw new ApiError(400, "answerId is required");
+  }
 
   if (!requestingUser) {
     throw new ApiError(401, "unauthorized");
   }
 
-	if (!isValidObjectId(answerId)) {
-		throw new ApiError(400, "invalid answerId");
-	}
+  if (!isValidObjectId(answerId)) {
+    throw new ApiError(400, "invalid answerId");
+  }
 
-	const answer = await Answer.findById(answerId);
-	if (!answer) {
-		throw new ApiError(400, "no answer found");
-	}
-	// check for author
-	const isAuthor =
-		requestingUser._id.toString() === answer.authorId.toString();
-	// check for mod
-	const isModerator = ["ADMIN", "MODERATOR"].includes(requestingUser.role);
+  const answer = await Answer.findById(answerId);
+  if (!answer) {
+    throw new ApiError(400, "no answer found");
+  }
+  // check for author
+  const isAuthor = requestingUser._id.toString() === answer.authorId.toString();
+  // check for mod
+  const isModerator = ["ADMIN", "MODERATOR"].includes(requestingUser.role);
 
-	// no mod and no author means , someone else try to delete -> stop it
-	if (!isAuthor && !isModerator) {
-		throw new ApiError(
-			403,
-			"You do not have permission to delete this answer",
-		);
-	}
+  // no mod and no author means , someone else try to delete -> stop it
+  if (!isAuthor && !isModerator) {
+    throw new ApiError(403, "You do not have permission to delete this answer");
+  }
 
-	// mod try to delete
-	if (isModerator && !isAuthor) {
-		answer.content = `[This answer were deleted by, moderator:- ${requestingUser.username}]`;
-		(answer as any).isDeleted = true;
-		(answer as any).deletedBy = requestingUser._id;
-		await answer.save();
-		return res
-			.status(200)
-			.json(new ApiResponse(200, answer, "answer deleted by moderator"));
-	}
+  // mod try to delete
+  if (isModerator && !isAuthor) {
+    answer.content = `[This answer were deleted by, moderator:- ${requestingUser.username}]`;
+    (answer as any).isDeleted = true;
+    (answer as any).deletedBy = requestingUser._id;
+    await answer.save();
+    return res.status(200).json(new ApiResponse(200, answer, "answer deleted by moderator"));
+  }
 
-	await Answer.findByIdAndDelete(answerId);
+  await Answer.findByIdAndDelete(answerId);
 
-	return res
-		.status(200)
-		.json(new ApiResponse(200, {}, "answer successfully deleted"));
+  return res.status(200).json(new ApiResponse(200, {}, "answer successfully deleted"));
 });
 
 export { answerToTheQuestion, deleteAnswer, getAnswer };

@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function AlertMessage({
-  text = "An Unknown error occurred",
-  autoHide = true,
-}) {
+export default function AlertMessage({ text = "An Unknown error occurred", autoHide = true }) {
   // console.log(text);
   const [visible, setVisible] = useState(true);
   const showComponent = () => {

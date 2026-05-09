@@ -35,8 +35,7 @@ export default function Register() {
     } else if (userData.username.length > 20) {
       newErrors.username = "Username must not exceed 20 characters";
     } else if (!usernameRegex.test(userData.username)) {
-      newErrors.username =
-        "Username can only contain letters, numbers, underscores, and hyphens";
+      newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens";
     }
 
     if (!userData.email.trim()) {
@@ -52,18 +51,13 @@ export default function Register() {
     } else if (userData.password.length > 128) {
       newErrors.password = "Password must not exceed 128 characters";
     } else if (!/(?=.*[a-z])/.test(userData.password)) {
-      newErrors.password =
-        "Password must contain at least one lowercase letter";
+      newErrors.password = "Password must contain at least one lowercase letter";
     } else if (!/(?=.*[A-Z])/.test(userData.password)) {
-      newErrors.password =
-        "Password must contain at least one uppercase letter";
+      newErrors.password = "Password must contain at least one uppercase letter";
     } else if (!/(?=.*\d)/.test(userData.password)) {
       newErrors.password = "Password must contain at least one number";
-    } else if (
-      !/(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/.test(userData.password)
-    ) {
-      newErrors.password =
-        "Password must contain at least one special character";
+    } else if (!/(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?])/.test(userData.password)) {
+      newErrors.password = "Password must contain at least one special character";
     }
 
     setErrors(newErrors);
@@ -71,9 +65,7 @@ export default function Register() {
     return !newErrors.username && !newErrors.email && !newErrors.password;
   };
 
-  const handleUsernameChnage = (
-    e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
-  ) => {
+  const handleUsernameChnage = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
     const username = e.target.value;
     setUserData((prevData) => ({ ...prevData, username }));
 
@@ -82,9 +74,7 @@ export default function Register() {
     }
   };
 
-  const handleEmailChange = (
-    e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
-  ) => {
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
     const email = e.target.value;
     setUserData((prevData) => ({ ...prevData, email }));
 
@@ -93,9 +83,7 @@ export default function Register() {
     }
   };
 
-  const handlePasswordChange = (
-    e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
-  ) => {
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
     const password = e.target.value;
     setUserData((prevData) => ({ ...prevData, password }));
 
@@ -164,13 +152,9 @@ export default function Register() {
           onChange={handlePasswordChange}
         />
 
-        {errors.password && (
-          <AlertMessage text={errors.password} autoHide={false} />
-        )}
+        {errors.password && <AlertMessage text={errors.password} autoHide={false} />}
 
-        <div
-          style={{ fontSize: "0.75rem", color: "#666", marginTop: "0.5rem" }}
-        >
+        <div style={{ fontSize: "0.75rem", color: "#666", marginTop: "0.5rem" }}>
           <p>Password must contain:</p>
           <ul style={{ paddingLeft: "1rem", margin: "0.25rem 0" }}>
             <li>At least 8 characters</li>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { Button } from "../../components";
 import postService from "../../services/post.services";
 import { useNavigate } from "react-router";
@@ -7,17 +7,16 @@ export default function RaiseQuery() {
   const [body, setBody] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-  const handleSubmit = async (e) => {
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     postService
       .createPost({ body })
       .then((data) => {
-        // navigate to created post page
         navigate(`/posts/${data._id}`);
       })
-      .catch((reason) => {
+      .catch((reason: any) => {
         setMessage(reason.message);
-        // alert(error.message);
       });
   };
 
@@ -32,17 +31,14 @@ export default function RaiseQuery() {
 
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
-              <label
-                htmlFor="query"
-                className="form-label fw-bold text-primary"
-              >
+              <label htmlFor="query" className="form-label fw-bold text-primary">
                 Your Question
               </label>
               <textarea
                 className="form-control border-primary"
                 name="query"
                 id="query"
-                rows="5"
+                rows={5}
                 placeholder="Type your question here..."
                 value={body}
                 onChange={(e) => setBody(e.target.value)}

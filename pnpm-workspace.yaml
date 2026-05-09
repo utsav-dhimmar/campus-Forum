@@ -1,3 +1,3 @@
 packages:
-    - "apps/*" # Frontend, Backend, Documentation
-    - "packages/*" # Shared UI, Configs, Utils, Database Schemas
+  - "apps/*" # Frontend, Backend, Documentation
+  - "packages/*" # Shared UI, Configs, Utils, Database Schemas

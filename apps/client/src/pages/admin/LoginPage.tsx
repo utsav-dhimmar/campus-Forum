@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { AlertMessage, Button, Input } from "../../components";
 import { useAuth } from "../../context/User.context";
 import adminService from "../../services/admin.services";
 import { useNavigate } from "react-router";
+import type { UserLogin } from "@repo/shared";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const { login, data } = useAuth();
 
-  const [userData, setUserData] = useState({
+  const [userData, setUserData] = useState<UserLogin>({
     email: "",
     password: "",
   });
@@ -43,7 +44,7 @@ export default function LoginPage() {
     return !newErrors.email && !newErrors.password;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     setMessage("");
@@ -53,28 +54,24 @@ export default function LoginPage() {
     }
 
     try {
-      const data = await adminService.login(userData);
-      if (data) {
-        console.log(data);
-        login({ email: data.email, role: "admin" });
-        // return navigate("/admin", { replace: true });
+      const res = await adminService.login(userData);
+      if (res) {
+        console.log(res);
+        login({ _id: "admin", username: res.email, role: "ADMIN" });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
-      setMessage(
-        error.message || "An unexpected error occurred. Please try again."
-      );
+      setMessage(error.message || "An unexpected error occurred. Please try again.");
     }
   };
-  console.log("Auth", data);
 
   useEffect(() => {
-    if (data?.role === "admin") {
+    if (data?.role === "ADMIN") {
       navigate("/admin", { replace: true });
     }
   }, [data, navigate]);
 
-  const handleEmailChange = (e) => {
+  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     const email = e.target.value;
     setUserData((prevData) => ({ ...prevData, email }));
 
@@ -83,7 +80,7 @@ export default function LoginPage() {
     }
   };
 
-  const handlePasswordChange = (e) => {
+  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     const password = e.target.value;
     setUserData((prevData) => ({ ...prevData, password }));
 
@@ -137,9 +134,7 @@ export default function LoginPage() {
               </div>
 
               <div className="card-footer text-center py-2">
-                <small className="text-muted">
-                  For authorized personnel only
-                </small>
+                <small className="text-muted">For authorized personnel only</small>
               </div>
             </div>
           </div>

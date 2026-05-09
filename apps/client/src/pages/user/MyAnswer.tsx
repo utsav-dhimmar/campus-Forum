@@ -1,33 +1,29 @@
 import { useEffect, useState } from "react";
-import { Loading, CardComponents, Button } from "../../components";
+import { Loading, Button } from "../../components";
 import { useAuth } from "../../context/User.context";
-import { Link, Navigate, useLocation, useNavigate } from "react-router";
+import { Link, Navigate } from "react-router";
 import answerService from "../../services/answer.services";
+import type { IMyAnswerResponse } from "@repo/shared";
 
 export default function MyAnswer() {
-  const [answers, setAnswers] = useState([]);
+  const [answers, setAnswers] = useState<IMyAnswerResponse[]>([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [totalPost, setTotalPost] = useState(0);
 
   const { data } = useAuth();
-  const navigate = useNavigate();
-  const { pathname, search } = useLocation();
-  // console.log(useLocation());
-  const handleClick = async (answerId) => {
-    console.log(answerId);
+
+  const handleClick = async (answerId: string) => {
     try {
       const res = await answerService.deleteAnswer(answerId);
-      console.log(answers);
       if (res) {
         setAnswers((currentAns) => {
           return currentAns.filter((ans) => ans._id !== answerId);
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       setMessage(error.message);
       console.error(error);
-      // alert(error.message);
     }
   };
 
@@ -37,11 +33,10 @@ export default function MyAnswer() {
         setLoading(true);
         const res = await answerService.getMyAnswers();
         setAnswers(res);
-      } catch (error) {
+      } catch (error: any) {
         console.log(error);
-        setAnswers(error.message);
-        // alert(error.message);
-        setPosts([]);
+        setMessage(error.message);
+        setAnswers([]);
       } finally {
         setLoading(false);
       }
@@ -54,47 +49,38 @@ export default function MyAnswer() {
   }, [answers]);
 
   if (!data) {
-    console.log("NO data found");
-    return <Navigate to={"/no-logged-in"} replace />;
+    return <Navigate to={"/login"} replace />;
   }
+
   return (
     <>
       {loading ? (
         <Loading />
       ) : (
-        <>
+        <div className="container">
           <p className="text-center mt-2">
-            Total{" "}
-            <span className="rounded-2 p-1 badge text-bg-primary">
-              {totalPost}
-            </span>{" "}
-            {totalPost === 1 ? "post" : "posts"} found
+            Total <span className="rounded-2 p-1 badge text-bg-primary">{totalPost}</span>{" "}
+            {totalPost === 1 ? "answer" : "answers"} found
           </p>
           {message && <div className="alert alert-danger">{message}</div>}
-          {answers.map((post) => (
-            <div key={post._id} className="mt-2">
+          {answers.map((answer) => (
+            <div key={answer._id} className="mt-2">
               <div className="card bg-light border-secondary">
                 <div className="card-body">
-                  <p className="card-text">{post.body}</p>
+                  <p className="card-text">{answer.body}</p>
                   <div className="p-2 d-flex gap-2">
-                    <Link to={`/posts/${post.post._id}`}>
-                      <Button className="btn btn-primary">
-                        Check Question / answers
-                      </Button>
+                    <Link to={`/posts/${answer.post._id}`}>
+                      <Button className="btn btn-primary">Check Question / answers</Button>
                     </Link>
-                    <Button
-                      className="btn btn-danger"
-                      onClick={() => handleClick(post._id)}
-                    >
+                    <Button className="btn btn-danger" onClick={() => handleClick(answer._id)}>
                       Delete
                     </Button>
                   </div>
                 </div>
               </div>
-              {/* <CardComponents key={post._id} postBody={post} /> */}
             </div>
           ))}
-        </>
+        </div>
       )}
     </>
   );

@@ -1,10 +1,7 @@
 type ButtonProps = {
   children: React.ReactNode;
   className: string;
-} & React.DetailedHTMLProps<
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  HTMLButtonElement
->;
+} & React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>;
 
 export default function Button(props: ButtonProps) {
   const { children, className = "btn-primary", ...rest } = props;

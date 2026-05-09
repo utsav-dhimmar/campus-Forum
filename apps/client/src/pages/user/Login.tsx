@@ -55,9 +55,7 @@ export default function LoginPage() {
     try {
       await authService
         .login(userData)
-        .then((data) =>
-          login({ _id: data._id, username: data.username, role: data.role }),
-        )
+        .then((data) => login({ _id: data._id, username: data.username, role: data.role }))
         .then(() => navigate("/"))
         .catch((reason) => setMessage(reason.message));
     } catch (error) {
@@ -70,9 +68,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleEmailChange = (
-    e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
-  ) => {
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
     const email = e.target.value;
     setUserData((prevData) => ({ ...prevData, email }));
 
@@ -81,9 +77,7 @@ export default function LoginPage() {
     }
   };
 
-  const handlePasswordChange = (
-    e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
-  ) => {
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
     const password = e.target.value;
     setUserData((prevData) => ({ ...prevData, password }));
 

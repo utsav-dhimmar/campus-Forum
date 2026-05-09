@@ -7,10 +7,7 @@ type InlineAnswerBoxProps = {
   onAnswerSubmit: () => void;
 };
 
-export default function InlineAnswerBox({
-  postId,
-  onAnswerSubmit,
-}: InlineAnswerBoxProps) {
+export default function InlineAnswerBox({ postId, onAnswerSubmit }: InlineAnswerBoxProps) {
   const [content, setContent] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,26 +26,21 @@ export default function InlineAnswerBox({
     setValidationError("");
 
     try {
-      // @ts-ignore
-      const res = await answerService.postAnswer(postId, {
+      await answerService.postAnswer(postId, {
         body: content,
       });
       setMessage("");
       setContent("");
       onAnswerSubmit();
     } catch (error) {
-      setMessage(
-        (error instanceof Error && error.message) || "Failed to post answer.",
-      );
+      setMessage((error instanceof Error && error.message) || "Failed to post answer.");
       // alert(error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleContentChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement, HTMLTextAreaElement>,
-  ) => {
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement, HTMLTextAreaElement>) => {
     setContent(e.target.value);
 
     if (validationError) {
@@ -65,17 +57,13 @@ export default function InlineAnswerBox({
       <form onSubmit={handleSubmit}>
         <div className="mb-2">
           <textarea
-            className={`form-control ${
-              validationError ? "border-danger" : "border-primary"
-            }`}
+            className={`form-control ${validationError ? "border-danger" : "border-primary"}`}
             rows={3}
             placeholder="Write your answer..."
             value={content}
             onChange={handleContentChange}
           ></textarea>
-          {validationError && (
-            <AlertMessage text={validationError} autoHide={true} />
-          )}
+          {validationError && <AlertMessage text={validationError} autoHide={true} />}
         </div>
         <div className="d-flex justify-content-between align-items-center">
           <button

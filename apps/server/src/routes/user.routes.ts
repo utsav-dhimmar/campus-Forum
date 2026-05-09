@@ -1,10 +1,10 @@
 import { Router } from "express";
 import {
-	login,
-	logout,
-	signUp,
-	getUserInfo,
-	newRefreshToken,
+  login,
+  logout,
+  signUp,
+  getUserInfo,
+  newRefreshToken,
 } from "../controllers/users.controller.js";
 import authMiddleware from "../middleware/auth.middleware.js";
 

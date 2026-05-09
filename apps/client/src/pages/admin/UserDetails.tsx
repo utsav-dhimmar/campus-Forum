@@ -2,34 +2,38 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { AlertMessage, Button, Loading } from "../../components";
 import adminService from "../../services/admin.services";
+import type { IUser } from "@repo/shared";
 
 export default function UserDetails() {
-  const { userId } = useParams();
-  const [user, setUser] = useState(null);
+  const { userId } = useParams<{ userId: string }>();
+  const [user, setUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [newRole, setNewRole] = useState("");
 
   useEffect(() => {
-    setLoading(true);
-    adminService
-      .getUserInfo(userId)
-      .then((user) => {
-        setUser(user);
-        setNewRole(user.role.toLowerCase());
-      })
-      .catch((reason) => {
-        console.log(reason);
-        setMessage(reason.message);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    if (userId) {
+      setLoading(true);
+      adminService
+        .getUserInfo(userId)
+        .then((userData) => {
+          setUser(userData);
+          setNewRole(userData.role.toLowerCase());
+        })
+        .catch((reason: any) => {
+          console.log(reason);
+          setMessage(reason.message);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
   }, [userId]);
 
   const navigate = useNavigate();
 
   const handleDeleteBtnClick = async () => {
+    if (!user) return;
     try {
       setLoading(true);
       const res = await adminService.deleteUser(user._id);
@@ -37,7 +41,7 @@ export default function UserDetails() {
         setLoading(false);
         navigate("/admin");
       }
-    } catch (error) {
+    } catch (error: any) {
       setMessage(error.message);
       console.log(error);
     } finally {
@@ -46,6 +50,7 @@ export default function UserDetails() {
   };
 
   const handleRoleUpdate = async () => {
+    if (!userId) return;
     try {
       console.log(newRole);
       setLoading(true);
@@ -54,7 +59,7 @@ export default function UserDetails() {
         setUser(res);
         setMessage("Role updated successfully!");
       }
-    } catch (error) {
+    } catch (error: any) {
       setMessage(error.message);
     } finally {
       setLoading(false);
@@ -81,11 +86,7 @@ export default function UserDetails() {
               <strong>Role:</strong> {user?.role || "user"}
             </li>
           </ul>
-          <Button
-            className="btn-danger"
-            onClick={handleDeleteBtnClick}
-            disabled={loading}
-          >
+          <Button className="btn-danger mt-3" onClick={handleDeleteBtnClick} disabled={loading}>
             Delete
           </Button>
           <div className="card shadow-sm mt-4">
@@ -99,11 +100,7 @@ export default function UserDetails() {
                 <option value="user">User</option>
                 <option value="moderator">Moderator</option>
               </select>
-              <Button
-                className="btn-primary"
-                onClick={handleRoleUpdate}
-                disabled={loading}
-              >
+              <Button className="btn-primary" onClick={handleRoleUpdate} disabled={loading}>
                 Save Role
               </Button>
             </div>

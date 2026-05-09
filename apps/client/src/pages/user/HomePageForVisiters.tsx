@@ -6,9 +6,7 @@ export default function HomePage() {
       <header className="bg-primary text-white py-5">
         <div className="container text-center">
           <h1 className="display-5 fw-bold">Welcome to Campus Forum</h1>
-          <p className="lead">
-            Connect. Collaborate. Contribute. Your campus knowledge hub.
-          </p>
+          <p className="lead">Connect. Collaborate. Contribute. Your campus knowledge hub.</p>
           <div className="mt-4">
             <Link to="/login" className="btn btn-light btn-lg me-3">
               Login
@@ -36,9 +34,7 @@ export default function HomePage() {
             <div className="card h-100 shadow-sm">
               <div className="card-body">
                 <h5 className="card-title text-primary">Share Knowledge</h5>
-                <p className="card-text">
-                  Help others by answering queries and sharing resources.
-                </p>
+                <p className="card-text">Help others by answering queries and sharing resources.</p>
               </div>
             </div>
           </div>
@@ -58,9 +54,7 @@ export default function HomePage() {
       <section className="bg-white py-5 border-top">
         <div className="container text-center">
           <h2 className="fw-bold text-primary mb-3">Ready to dive in?</h2>
-          <p className="mb-4">
-            Join the conversation and make your voice heard.
-          </p>
+          <p className="mb-4">Join the conversation and make your voice heard.</p>
           <Link to="/signup" className="btn btn-primary btn-lg">
             Create Your Account
           </Link>

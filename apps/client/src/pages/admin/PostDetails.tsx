@@ -2,31 +2,37 @@ import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import adminService from "../../services/admin.services";
 import { Button, Loading, AlertMessage } from "../../components";
+import type { IPostDetails } from "@repo/shared";
 
 export default function PostDetails() {
-  const { postId } = useParams();
-  const [post, setPost] = useState(null);
+  const { postId } = useParams<{ postId: string }>();
+  const [post, setPost] = useState<IPostDetails | null>(null);
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    adminService.getPostById(postId).then(setPost);
+    if (postId) {
+      adminService
+        .getPostById(postId)
+        .then(setPost)
+        .catch((err) => setMessage(err.message));
+    }
   }, [postId]);
 
-  // console.log(post);
-  const handleAnswerDelete = async (answerId) => {
+  const handleAnswerDelete = async (answerId: string) => {
     try {
       setLoading(true);
       const res = await adminService.deleteAnswer(answerId);
-      if (res) {
-        setPost((currentPost) => ({
-          ...currentPost,
-          answers: currentPost.answers.filter(
-            (answer) => answer._id !== answerId
-          ),
-        }));
+      if (res && post) {
+        setPost((currentPost) => {
+          if (!currentPost) return null;
+          return {
+            ...currentPost,
+            answers: currentPost.answers.filter((answer) => answer._id !== answerId),
+          };
+        });
       }
-    } catch (error) {
+    } catch (error: any) {
       setMessage(error.message);
       console.log(error);
     } finally {
@@ -59,13 +65,12 @@ export default function PostDetails() {
             <div key={index} className="card mb-3 border-light shadow-sm">
               <div className="card-body">
                 <p className="mb-1">{data.content}</p>
-                <small className="text-muted">
-                  — {data.authorInfo?.username}
-                </small>
-                <div>
+                <small className="text-muted">— {data.authorInfo?.username}</small>
+                <div className="mt-2">
                   <Button
-                    className="btn-danger"
+                    className="btn-danger btn-sm"
                     onClick={() => handleAnswerDelete(data._id)}
+                    disabled={loading}
                   >
                     Delete
                   </Button>

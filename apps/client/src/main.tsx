@@ -1,16 +1,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Route,
-  RouterProvider,
-} from "react-router";
-import App from "./App.js";
-import "./index.css";
-import { UserProvider } from "./providers/User.Provider.js";
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router";
+import App from "@/App.tsx";
+import "@/index.css";
+import { UserProvider } from "./providers/User.Provider.tsx";
 
-import { AuthComponent, GuestOnly } from "./components/index.js";
+import { AuthComponent, GuestOnly } from "./components/index.ts";
 import {
   AboutMe,
   HomePage,
@@ -21,9 +16,9 @@ import {
   PostInfo,
   RaiseQuery,
   SignUpPage,
-} from "./pages/user/index.js";
+} from "@/pages/user/index.ts";
 
-import { adminRoutes } from "./routes/adminRoutes.js";
+import { adminRoutes } from "@/routes/adminRoutes.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(

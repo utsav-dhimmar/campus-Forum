@@ -6,22 +6,22 @@ export interface IPostDocument extends Omit<IPost, "_id">, Document {
 }
 
 const schema = new Schema<IPostDocument>(
-	{
-		body: {
-			type: String,
-			required: true,
-			trim: true,
-			minlength: [10, "Post must have atleast 10 characters"],
-		},
-		authorId: {
-			type: Schema.Types.ObjectId,
-			ref: "User",
-			required: true,
-		},
-	},
-	{
-		timestamps: true,
-	},
+  {
+    body: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: [10, "Post must have atleast 10 characters"],
+    },
+    authorId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  },
 );
 
 const Post = model<IPostDocument>("Post", schema);

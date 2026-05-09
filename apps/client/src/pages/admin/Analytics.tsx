@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import adminService from "../../services/admin.services";
+import { useEffect, useState, type FormEvent } from "react";
+import adminService, { type IAnalyticsResponse } from "../../services/admin.services";
 import { AlertMessage } from "../../components";
 import { Link, useSearchParams } from "react-router";
 
@@ -8,12 +8,10 @@ export default function Analytics() {
   const END_DATE = new Date().toISOString().split("T")[0];
   const [startDate, setStartDate] = useState(START_DATE);
   const [endDate, setEndDate] = useState(END_DATE);
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<IAnalyticsResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  let [searchParams, setSearchParams] = useSearchParams(
-    `startDate=${START_DATE}&endDate=${END_DATE}`
-  );
+  const [, setSearchParams] = useSearchParams(`startDate=${START_DATE}&endDate=${END_DATE}`);
 
   const fetchData = async () => {
     try {
@@ -26,7 +24,7 @@ export default function Analytics() {
         setData(res);
         setSearchParams({ startDate, endDate });
       }
-    } catch (error) {
+    } catch (error: any) {
       setMessage(error.message);
     } finally {
       setLoading(false);
@@ -43,7 +41,7 @@ export default function Analytics() {
 
       <form
         className="row g-3 mb-4"
-        onSubmit={(e) => {
+        onSubmit={(e: FormEvent) => {
           e.preventDefault();
           fetchData();
         }}
@@ -86,8 +84,7 @@ export default function Analytics() {
       {!loading && data && (
         <>
           <div className="alert alert-info">
-            <strong>Date Range:</strong> {data.dateRange.start} →{" "}
-            {data.dateRange.end}
+            <strong>Date Range:</strong> {data.dateRange.start} → {data.dateRange.end}
           </div>
 
           <div className="row g-4">
@@ -106,12 +103,14 @@ export default function Analytics() {
                       </tr>
                     </thead>
                     <tbody>
-                      {data.users?.newUsers[0]?.users.map((u, idx) => (
+                      {data.users?.newUsers[0]?.users.map((u: any, idx: number) => (
                         <tr key={u._id}>
                           <td>{idx + 1}</td>
                           <td>{u.username}</td>
                           <td>{u.email}</td>
-                          <Link to={`/admin/user/${u._id}`}>Show Data</Link>
+                          <td>
+                            <Link to={`/admin/user/${u._id}`}>Show Data</Link>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -122,9 +121,7 @@ export default function Analytics() {
 
             <div className="col-md-6">
               <div className="card shadow-sm">
-                <div className="card-header bg-success text-white">
-                  Activity
-                </div>
+                <div className="card-header bg-success text-white">Activity</div>
                 <div className="card-body">
                   <p className="mb-2">
                     <strong>New Posts:</strong> {data.posts?.newPost}
@@ -142,14 +139,12 @@ export default function Analytics() {
               Top Posts ({data.topPostData?.topPost.length || 0})
             </div>
             <ul className="list-group list-group-flush">
-              {data.topPostData?.topPost.map((post, idx) => (
+              {data.topPostData?.topPost.map((post: any, idx: number) => (
                 <li key={post._id} className="list-group-item">
                   <div className="fw-bold">
                     {idx + 1}. {post.body}
                   </div>
-                  <small className="text-muted">
-                    Answers: {post.answerCount}
-                  </small>
+                  <small className="text-muted">Answers: {post.answerCount}</small>
                 </li>
               ))}
             </ul>
