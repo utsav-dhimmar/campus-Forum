@@ -10,11 +10,11 @@ export default function AuthComponent() {
   if (isAuthenticate && userData?.role?.toLowerCase() === "admin") {
     return <Navigate to={"/admin"} replace />;
   }
-  if (!isAuthenticate && pathname !== "/login" && pathname !== "/register") {
+  if (!isAuthenticate && pathname !== "/login" && pathname !== "/signup") {
     return <Navigate to="/login" replace />;
   }
 
-  if (isAuthenticate && (pathname === "/login" || pathname === "/register")) {
+  if (isAuthenticate && (pathname === "/login" || pathname === "/signup")) {
     console.log("redirect");
     return <Navigate to="/" replace />;
   }
