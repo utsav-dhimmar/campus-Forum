@@ -1,8 +1,8 @@
 import { Navigate, Outlet } from "react-router";
-import { useAuth } from "../context/User.context";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function GuestOnly() {
-  const { data: userData } = useAuth();
+  const { data: userData } = useAuthStore();
   if (!userData) {
     <Navigate to="/login" />;
     return;

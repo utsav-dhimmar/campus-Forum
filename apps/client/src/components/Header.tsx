@@ -1,7 +1,7 @@
-import { useAuth } from "@/context/User.context.ts";
 import authService from "@/services/auth.services.ts";
 import { Link } from "react-router";
 import Button from "./Button.tsx";
+import { useAuthStore } from "@/store/useAuthStore.ts";
 
 type LogoutProps = { onClick: () => void };
 
@@ -14,7 +14,7 @@ function Logout({ onClick }: LogoutProps) {
 }
 
 export default function Header() {
-  const { data, logout } = useAuth();
+  const { data, logout } = useAuthStore();
 
   const handleClick = () => {
     authService

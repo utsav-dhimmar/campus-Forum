@@ -1,11 +1,14 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router";
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+} from "react-router";
 import App from "@/App.tsx";
 import "@/index.css";
-import { UserProvider } from "./providers/User.Provider.tsx";
-
-import { AuthComponent, GuestOnly } from "./components/index.ts";
+import { AuthComponent, GuestOnly } from "@/components/index.ts";
 import {
   AboutMe,
   HomePage,
@@ -52,8 +55,6 @@ const router = createBrowserRouter(
 // console.log(router.state);
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
-    <UserProvider>
-      <RouterProvider router={router} />
-    </UserProvider>
+    <RouterProvider router={router} />
   </StrictMode>,
 );

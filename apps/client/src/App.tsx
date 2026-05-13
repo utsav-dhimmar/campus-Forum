@@ -1,11 +1,11 @@
 import { Footer, Header } from "@/components";
 import { useEffect } from "react";
 import { Outlet } from "react-router";
-import { useAuth } from "@/context/User.context";
 import authService from "@/services/auth.services";
+import { useAuthStore } from "@/store/useAuthStore";
 
 function App() {
-  const { login, logout } = useAuth();
+  const { login, logout } = useAuthStore();
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("userData")!) ?? false;

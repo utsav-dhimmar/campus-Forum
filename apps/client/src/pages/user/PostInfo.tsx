@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Button, InlineAnswerBox, Loading } from "../../components";
-import { useAuth } from "../../context/User.context";
 import answerService from "../../services/answer.services";
 import postService from "../../services/post.services";
 import type { IPostDetails } from "@repo/shared";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface PostState extends IPostDetails {
   question: string;
@@ -12,7 +12,7 @@ interface PostState extends IPostDetails {
 
 export default function PostInfo() {
   const { postId } = useParams<{ postId: string }>();
-  const { data: userData } = useAuth();
+  const { data: userData } = useAuthStore();
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -76,14 +76,18 @@ export default function PostInfo() {
   if (!post) {
     return (
       <div className="container my-4">
-        <div className="alert alert-danger">{message || "Could not load the post."}</div>
+        <div className="alert alert-danger">
+          {message || "Could not load the post."}
+        </div>
       </div>
     );
   }
 
   const canDeletePost =
     userData &&
-    (userData._id === post.authorId || userData.role === "MODERATOR" || userData.role === "ADMIN");
+    (userData._id === post.authorId ||
+      userData.role === "MODERATOR" ||
+      userData.role === "ADMIN");
 
   return (
     <div className="container my-4">
@@ -93,7 +97,11 @@ export default function PostInfo() {
         <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
           <h5 className="mb-0">Question</h5>
           {canDeletePost && (
-            <Button className="btn-sm btn-danger" onClick={handlePostDelete} disabled={loading}>
+            <Button
+              className="btn-sm btn-danger"
+              onClick={handlePostDelete}
+              disabled={loading}
+            >
               Delete Post
             </Button>
           )}
@@ -124,7 +132,9 @@ export default function PostInfo() {
               <div key={index} className="card mb-3 border-light shadow-sm">
                 <div className="card-body">
                   <p className="mb-1">{data.content}</p>
-                  <small className="text-muted">— {data.authorInfo?.username}</small>
+                  <small className="text-muted">
+                    — {data.authorInfo?.username}
+                  </small>
                   {canDeleteAnswer && !isDeletedByMod && (
                     <Button
                       className="btn-sm btn-outline-danger m-2"

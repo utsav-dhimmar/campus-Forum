@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Input, Button, AlertMessage, AuthNavigation } from "../../components";
-import { useAuth } from "../../context/User.context";
 import authService from "../../services/auth.services";
 import { useNavigate } from "react-router";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login } = useAuthStore();
   const navigate = useNavigate();
 
   const [userData, setUserData] = useState({
@@ -55,7 +55,9 @@ export default function LoginPage() {
     try {
       await authService
         .login(userData)
-        .then((data) => login({ _id: data._id, username: data.username, role: data.role }))
+        .then((data) =>
+          login({ _id: data._id, username: data.username, role: data.role }),
+        )
         .then(() => navigate("/"))
         .catch((reason) => setMessage(reason.message));
     } catch (error) {
@@ -68,7 +70,9 @@ export default function LoginPage() {
     }
   };
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
+  const handleEmailChange = (
+    e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
+  ) => {
     const email = e.target.value;
     setUserData((prevData) => ({ ...prevData, email }));
 
@@ -77,7 +81,9 @@ export default function LoginPage() {
     }
   };
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
+  const handlePasswordChange = (
+    e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
+  ) => {
     const password = e.target.value;
     setUserData((prevData) => ({ ...prevData, password }));
 

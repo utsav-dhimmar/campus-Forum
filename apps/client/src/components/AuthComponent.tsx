@@ -1,9 +1,9 @@
-import { useAuth } from "@/context/User.context";
+import { useAuthStore } from "@/store/useAuthStore";
 import { Navigate, Outlet, useLocation } from "react-router";
 
 export default function AuthComponent() {
   const { pathname } = useLocation();
-  const { data: userData } = useAuth();
+  const { data: userData } = useAuthStore();
 
   const isAuthenticate = !!userData;
 

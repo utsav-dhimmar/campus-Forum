@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Loading, Button } from "../../components";
-import { useAuth } from "../../context/User.context";
 import { Link, Navigate } from "react-router";
 import answerService from "../../services/answer.services";
 import type { IMyAnswerResponse } from "@repo/shared";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function MyAnswer() {
   const [answers, setAnswers] = useState<IMyAnswerResponse[]>([]);
@@ -11,7 +11,7 @@ export default function MyAnswer() {
   const [loading, setLoading] = useState(false);
   const [totalPost, setTotalPost] = useState(0);
 
-  const { data } = useAuth();
+  const { data } = useAuthStore();
 
   const handleClick = async (answerId: string) => {
     try {
@@ -59,7 +59,10 @@ export default function MyAnswer() {
       ) : (
         <div className="container">
           <p className="text-center mt-2">
-            Total <span className="rounded-2 p-1 badge text-bg-primary">{totalPost}</span>{" "}
+            Total{" "}
+            <span className="rounded-2 p-1 badge text-bg-primary">
+              {totalPost}
+            </span>{" "}
             {totalPost === 1 ? "answer" : "answers"} found
           </p>
           {message && <div className="alert alert-danger">{message}</div>}
@@ -70,9 +73,14 @@ export default function MyAnswer() {
                   <p className="card-text">{answer.body}</p>
                   <div className="p-2 d-flex gap-2">
                     <Link to={`/posts/${answer.post._id}`}>
-                      <Button className="btn btn-primary">Check Question / answers</Button>
+                      <Button className="btn btn-primary">
+                        Check Question / answers
+                      </Button>
                     </Link>
-                    <Button className="btn btn-danger" onClick={() => handleClick(answer._id)}>
+                    <Button
+                      className="btn btn-danger"
+                      onClick={() => handleClick(answer._id)}
+                    >
                       Delete
                     </Button>
                   </div>

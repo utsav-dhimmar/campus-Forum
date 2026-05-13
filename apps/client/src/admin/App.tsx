@@ -1,9 +1,9 @@
 import { Link, Outlet, useNavigate } from "react-router";
 import { Button } from "../components";
-import { useAuth } from "../context/User.context";
 import adminService from "../services/admin.services";
 
 import { useEffect, useState } from "react";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface LogoutProps {
   onClick: () => Promise<void>;
@@ -18,7 +18,7 @@ function Logout({ onClick }: LogoutProps) {
 }
 export default function AdminApp() {
   const [message, setMessage] = useState("");
-  const { login, logout } = useAuth();
+  const { login, logout } = useAuthStore();
 
   const navigate = useNavigate();
   const handleClick = async () => {
@@ -53,7 +53,10 @@ export default function AdminApp() {
           <Link to={"/admin"} className="btn btn-sm btn-outline-primary">
             Dashboard
           </Link>
-          <Link to={"/admin/analytics"} className="btn btn-sm btn-outline-primary">
+          <Link
+            to={"/admin/analytics"}
+            className="btn btn-sm btn-outline-primary"
+          >
             Analytics Page
           </Link>
           <Logout onClick={handleClick} />
