@@ -12,25 +12,6 @@ export interface IUser {
   updatedAt?: Date;
 }
 
-export interface IPost {
-  _id: string;
-  body: string;
-  authorId: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-export interface IAnswer {
-  _id: string;
-  authorId: string;
-  postId: string;
-  content: string;
-  isDeleted: boolean;
-  deletedBy?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
 export * from "./types/answer.ts";
 export * from "./types/auth.ts";
 export * from "./types/post.ts";

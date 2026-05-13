@@ -1,4 +1,10 @@
-import type { IUser, UserCreate, UserLogin } from "@repo/shared";
+import type {
+  UserCreate,
+  UserLogin,
+  UserCreateResponse,
+  UserLoginResponse,
+  UserProfileResponse,
+} from "@repo/shared";
 
 class AuthService {
   BASE_URL: string;
@@ -6,7 +12,7 @@ class AuthService {
     this.BASE_URL = "/api";
   }
 
-  async signup(signupData: UserCreate): Promise<IUser> {
+  async signup(signupData: UserCreate): Promise<UserCreateResponse> {
     try {
       const res = await fetch(`${this.BASE_URL}/users/signup`, {
         body: JSON.stringify(signupData),
@@ -26,7 +32,7 @@ class AuthService {
     }
   }
 
-  async login(loginData: UserLogin): Promise<IUser> {
+  async login(loginData: UserLogin): Promise<UserLoginResponse> {
     try {
       const res = await fetch(`${this.BASE_URL}/users/login`, {
         body: JSON.stringify(loginData),
@@ -66,7 +72,7 @@ class AuthService {
     }
   }
 
-  async getUserInfo(): Promise<IUser> {
+  async getUserInfo(): Promise<UserProfileResponse> {
     try {
       const res = await fetch(`${this.BASE_URL}/users/me`, {
         method: "GET",

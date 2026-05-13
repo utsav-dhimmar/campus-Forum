@@ -1,4 +1,4 @@
-import type { AnswerCreate } from "@repo/shared";
+import type { AnswerCreate, IAnswer, IMyAnswerResponse } from "@repo/shared";
 
 class AnswerService {
   BASE_URL: string;
@@ -6,7 +6,7 @@ class AnswerService {
     this.BASE_URL = "/api";
   }
 
-  async postAnswer(postId: string, data: AnswerCreate) {
+  async postAnswer(postId: string, data: AnswerCreate): Promise<IAnswer> {
     try {
       const res = await fetch(`${this.BASE_URL}/posts/answer/${postId}`, {
         method: "POST",
@@ -28,12 +28,12 @@ class AnswerService {
   }
   /**
    *
-   * @param {string} postId
+   * @param {string} answerId
    */
-  async getAnswer(postId: string) {
+  async getAnswer(answerId: string): Promise<IAnswer> {
     try {
-      const res = await fetch(`${this.BASE_URL}/posts/answer/${postId}`, {
-        method: "POST",
+      const res = await fetch(`${this.BASE_URL}/answer/${answerId}`, {
+        method: "GET",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
@@ -53,13 +53,13 @@ class AnswerService {
    *
    * @param {string} answerId
    */
-  async deleteAnswer(answerId: string) {
+  async deleteAnswer(answerId: string): Promise<IAnswer | {}> {
     try {
       const res = await fetch(`${this.BASE_URL}/answer/${answerId}`, {
         method: "DELETE",
         credentials: "include",
         headers: {
-          "Content-Type": "application-json",
+          "Content-Type": "application/json",
         },
       });
       const resData = await res.json();
@@ -74,9 +74,9 @@ class AnswerService {
   }
   /**
    *
-   * @returns {Promise<Array<any>>}
+   * @returns {Promise<IMyAnswerResponse[]>}
    */
-  async getMyAnswers() {
+  async getMyAnswers(): Promise<IMyAnswerResponse[]> {
     try {
       const res = await fetch(`${this.BASE_URL}/answer/user/my-answers`, {
         method: "GET",
