@@ -1,13 +1,12 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { AlertMessage, Button, Input } from "../../components";
-import { useAuth } from "../../context/User.context";
 import adminService from "../../services/admin.services";
 import { useNavigate } from "react-router";
 import type { UserLogin } from "@repo/shared";
-
+import { useAuthStore } from "@/store/useAuthStore";
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { login, data } = useAuth();
+  const { login, data } = useAuthStore();
 
   const [userData, setUserData] = useState<UserLogin>({
     email: "",
@@ -61,7 +60,9 @@ export default function LoginPage() {
       }
     } catch (error: any) {
       console.log(error);
-      setMessage(error.message || "An unexpected error occurred. Please try again.");
+      setMessage(
+        error.message || "An unexpected error occurred. Please try again.",
+      );
     }
   };
 
@@ -134,7 +135,9 @@ export default function LoginPage() {
               </div>
 
               <div className="card-footer text-center py-2">
-                <small className="text-muted">For authorized personnel only</small>
+                <small className="text-muted">
+                  For authorized personnel only
+                </small>
               </div>
             </div>
           </div>

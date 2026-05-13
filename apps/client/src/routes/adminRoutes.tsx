@@ -7,13 +7,13 @@ import {
   UserDetails,
 } from "../pages/admin";
 import { Outlet, Route, useLocation, useNavigate } from "react-router";
-import { useAuth } from "../context/User.context";
 import { useEffect } from "react";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function AdminProtected() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { data: userData } = useAuth();
+  const { data: userData } = useAuthStore();
 
   const isAuthenticate = !!userData;
 
