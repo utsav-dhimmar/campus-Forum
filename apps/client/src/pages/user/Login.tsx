@@ -55,9 +55,7 @@ export default function LoginPage() {
     try {
       await authService
         .login(userData)
-        .then((data) =>
-          login({ _id: data._id, username: data.username, role: data.role }),
-        )
+        .then((data) => login({ _id: data._id, username: data.username, role: data.role }))
         .then(() => navigate("/"))
         .catch((reason) => setMessage(reason.message));
     } catch (error) {
@@ -70,9 +68,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleEmailChange = (
-    e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
-  ) => {
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
     const email = e.target.value;
     setUserData((prevData) => ({ ...prevData, email }));
 
@@ -81,9 +77,7 @@ export default function LoginPage() {
     }
   };
 
-  const handlePasswordChange = (
-    e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
-  ) => {
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
     const password = e.target.value;
     setUserData((prevData) => ({ ...prevData, password }));
 
@@ -93,35 +87,42 @@ export default function LoginPage() {
   };
 
   return (
-    <div>
-      <AuthNavigation value={"login"} />
-      <form onSubmit={handleSubmit}>
-        <Input
-          label="email"
-          type="email"
-          required
-          autoComplete="email"
-          value={userData.email}
-          onChange={handleEmailChange}
-        />
-        {errors.email && <AlertMessage text={errors.email} />}
+    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4">
+      <div className="card w-full max-w-md bg-base-100 shadow-2xl border border-base-200">
+        <div className="card-body">
+          <h2 className="card-title text-2xl font-bold text-center justify-center mb-4">Login</h2>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <Input
+              label="Email"
+              type="email"
+              required
+              autoComplete="email"
+              value={userData.email}
+              onChange={handleEmailChange}
+            />
+            {errors.email && <AlertMessage text={errors.email} />}
 
-        <Input
-          label="password"
-          type="password"
-          required
-          autoComplete="current-password"
-          value={userData.password}
-          onChange={handlePasswordChange}
-        />
+            <Input
+              label="Password"
+              type="password"
+              required
+              autoComplete="current-password"
+              value={userData.password}
+              onChange={handlePasswordChange}
+            />
+            {errors.password && <AlertMessage text={errors.password} />}
 
-        {errors.password && <AlertMessage text={errors.password} />}
-        <Button className="btn-primary" type="submit">
-          Login !!
-        </Button>
+            <div className="card-actions mt-4">
+              <Button className="btn-primary w-full" type="submit">
+                Login
+              </Button>
+            </div>
 
-        {message && <AlertMessage text={message} />}
-      </form>
+            {message && <AlertMessage text={message} autoHide={false} />}
+          </form>
+          <AuthNavigation value={"login"} />
+        </div>
+      </div>
     </div>
   );
 }

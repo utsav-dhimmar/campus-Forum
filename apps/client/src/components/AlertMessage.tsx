@@ -23,7 +23,7 @@ export default function AlertMessage({ text = "An Unknown error occurred", autoH
   return (
     <>
       {visible && (
-        <div className="alert alert-danger mt-2">
+        <div className="alert alert-error mt-2">
           <span>{text}</span>
         </div>
       )}

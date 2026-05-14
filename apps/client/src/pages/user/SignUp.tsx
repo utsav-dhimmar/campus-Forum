@@ -118,59 +118,65 @@ export default function Register() {
   };
 
   return (
-    <div>
-      <AuthNavigation value={"Register"} />
-      <form onSubmit={handleSubmit}>
-        <Input
-          label="username"
-          type="text"
-          required
-          autoComplete="username"
-          value={userData.username}
-          onChange={handleUsernameChnage}
-        />
-        {errors.username && <AlertMessage text={errors.username} />}
+    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 py-12">
+      <div className="card w-full max-w-lg bg-base-100 shadow-2xl border border-base-200">
+        <div className="card-body">
+          <h2 className="card-title text-2xl font-bold text-center justify-center mb-4">
+            Create Account
+          </h2>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+            <Input
+              label="Username"
+              type="text"
+              required
+              autoComplete="username"
+              value={userData.username}
+              onChange={handleUsernameChnage}
+            />
+            {errors.username && <AlertMessage text={errors.username} />}
 
-        {/* <AlertMessage /> */}
+            <Input
+              label="Email"
+              type="email"
+              required
+              autoComplete="email"
+              value={userData.email}
+              onChange={handleEmailChange}
+            />
+            {errors.email && <AlertMessage text={errors.email} />}
 
-        <Input
-          label="email"
-          type="email"
-          required
-          autoComplete="email"
-          value={userData.email}
-          onChange={handleEmailChange}
-        />
-        {errors.email && <AlertMessage text={errors.email} />}
+            <Input
+              label="Password"
+              type="password"
+              autoComplete="new-password"
+              required
+              value={userData.password}
+              onChange={handlePasswordChange}
+            />
+            {errors.password && <AlertMessage text={errors.password} autoHide={false} />}
 
-        <Input
-          label="password"
-          type="password"
-          autoComplete="new-password"
-          required
-          value={userData.password}
-          onChange={handlePasswordChange}
-        />
+            <div className="bg-base-200 p-4 rounded-lg mt-2 text-xs opacity-70">
+              <p className="font-bold mb-1">Password requirements:</p>
+              <ul className="grid grid-cols-2 gap-x-4 list-disc pl-4">
+                <li>At least 8 chars</li>
+                <li>Lowercase letter</li>
+                <li>Uppercase letter</li>
+                <li>One number</li>
+                <li>Special character</li>
+              </ul>
+            </div>
 
-        {errors.password && <AlertMessage text={errors.password} autoHide={false} />}
+            <div className="card-actions mt-6">
+              <Button type="submit" className="btn-primary w-full">
+                Register
+              </Button>
+            </div>
 
-        <div style={{ fontSize: "0.75rem", color: "#666", marginTop: "0.5rem" }}>
-          <p>Password must contain:</p>
-          <ul style={{ paddingLeft: "1rem", margin: "0.25rem 0" }}>
-            <li>At least 8 characters</li>
-            <li>One lowercase letter</li>
-            <li>One uppercase letter</li>
-            <li>One number</li>
-            <li>One special character</li>
-          </ul>
+            {message && <AlertMessage text={message} autoHide={false} />}
+          </form>
+          <AuthNavigation value={"Register"} />
         </div>
-
-        <Button type="submit" className="btn-primary">
-          Register
-        </Button>
-
-        {message && <AlertMessage text={message} />}
-      </form>
+      </div>
     </div>
   );
 }

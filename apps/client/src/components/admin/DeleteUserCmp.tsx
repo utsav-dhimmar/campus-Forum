@@ -8,7 +8,7 @@ interface DeleteUsrCmpProps {
 
 export default function DeleteUsrCmp({ onClick, id, disabled }: DeleteUsrCmpProps) {
   return (
-    <Button className="btn-danger" onClick={() => onClick(id)} disabled={disabled}>
+    <Button className="btn-error btn-sm" onClick={() => onClick(id)} disabled={disabled}>
       Delete
     </Button>
   );

@@ -26,42 +26,63 @@ export default function AboutMe() {
   }, []);
 
   return (
-    <div className="container mt-5">
-      <div className="row justify-content-center">
-        <div className="col-md-8 col-lg-6">
-          <h1 className="text-center mb-4">About Me</h1>
+    <div className="container mx-auto px-4 py-12 max-w-2xl">
+      <h1 className="text-4xl font-extrabold text-center mb-10 text-primary">About Me</h1>
 
-          {loading && <Loading />}
+      {loading && <Loading />}
 
-          {message && !loading && (
-            <div className="alert alert-danger" role="alert">
-              {message}
-            </div>
-          )}
+      {message && !loading && (
+        <div className="alert alert-error shadow-lg mb-6">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="stroke-current flex-shrink-0 h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span>{message}</span>
+        </div>
+      )}
 
-          {!loading && !message && userData && Object.keys(userData).length > 0 && (
-            <div className="card shadow-sm">
-              <div className="card-header">User Profile</div>
-              <div className="card-body">
-                <ul className="list-group list-group-flush">
-                  <li className="list-group-item">
-                    <strong>Username:</strong> {userData.username}
-                  </li>
-                  <li className="list-group-item">
-                    <strong>Email:</strong> {userData.email}
-                  </li>
-                  <li className="list-group-item">
-                    <strong>ID:</strong> {userData._id}
-                  </li>
-                  <li className="list-group-item">
-                    <strong>Role:</strong> {userData?.role || "user"}
-                  </li>
-                </ul>
+      {!loading && !message && userData && Object.keys(userData).length > 0 && (
+        <div className="card bg-base-100 shadow-2xl border border-base-200 overflow-hidden">
+          <div className="bg-primary text-primary-content p-4 font-bold text-center uppercase tracking-widest text-sm">
+            User Profile
+          </div>
+          <div className="card-body p-0">
+            <div className="divide-y divide-base-200">
+              <div className="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <span className="text-sm font-bold opacity-60 uppercase tracking-wider">
+                  Username
+                </span>
+                <span className="text-xl font-medium">{userData.username}</span>
+              </div>
+              <div className="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <span className="text-sm font-bold opacity-60 uppercase tracking-wider">Email</span>
+                <span className="text-xl font-medium">{userData.email}</span>
+              </div>
+              <div className="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <span className="text-sm font-bold opacity-60 uppercase tracking-wider">
+                  User ID
+                </span>
+                <span className="text-mono text-sm opacity-80">{userData._id}</span>
+              </div>
+              <div className="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <span className="text-sm font-bold opacity-60 uppercase tracking-wider">Role</span>
+                <span className="badge badge-secondary badge-lg font-bold p-4">
+                  {userData?.role || "user"}
+                </span>
               </div>
             </div>
-          )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

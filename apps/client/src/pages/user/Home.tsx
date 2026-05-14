@@ -31,9 +31,7 @@ export default function HomePage() {
 
     if (
       data?.role &&
-      (data?.role === "MODERATOR" ||
-        data?.role === "USER" ||
-        data?.role === "ADMIN")
+      (data?.role === "MODERATOR" || data?.role === "USER" || data?.role === "ADMIN")
     ) {
       fetchData();
     }
@@ -54,26 +52,30 @@ export default function HomePage() {
   }
 
   return (
-    <div className="container">
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
       {loading ? (
         <Loading />
       ) : (
-        <>
-          <p className="text-center mt-2">
-            Total{" "}
-            <span className="rounded-2 p-1 badge text-bg-primary">
-              {totalPost}
-            </span>{" "}
-            {totalPost === 1 ? "post" : "posts"} found
-          </p>
-
-          {posts.map((post) => (
-            <div key={post._id} className="mt-2">
-              <CardComponents key={post._id} postBody={post} />
+        <div className="flex flex-col gap-6">
+          <div className="flex justify-center">
+            <div className="badge badge-primary badge-outline badge-lg p-4 gap-2">
+              Total <span className="font-bold">{totalPost}</span>{" "}
+              {totalPost === 1 ? "post" : "posts"} found
             </div>
-          ))}
-          {message && <AlertMessage autoHide={false} text={message} />}
-        </>
+          </div>
+
+          <div className="grid gap-4">
+            {posts.map((post) => (
+              <CardComponents key={post._id} postBody={post} />
+            ))}
+          </div>
+
+          {message && (
+            <div className="mt-4">
+              <AlertMessage autoHide={false} text={message} />
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

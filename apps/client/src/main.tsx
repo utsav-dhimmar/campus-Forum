@@ -1,13 +1,8 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Route,
-  RouterProvider,
-} from "react-router";
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router";
 import App from "@/App.tsx";
-import "@/index.css";
+import "./index.css";
 import { AuthComponent, GuestOnly } from "@/components/index.ts";
 import {
   AboutMe,

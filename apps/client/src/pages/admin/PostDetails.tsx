@@ -41,49 +41,84 @@ export default function PostDetails() {
   };
 
   return post ? (
-    <div className="container mt-4">
-      <h3>Post Details</h3>
+    <div className="p-6 space-y-8">
+      <div className="flex items-center gap-4">
+        <Link to="/admin" className="btn btn-ghost btn-circle">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+        </Link>
+        <h3 className="text-3xl font-bold">Post Details</h3>
+      </div>
+
       {message && <AlertMessage text={message} autoHide={true} />}
-      <div className="card shadow-sm border-primary">
-        <div className="card-header bg-primary text-white">
-          <h5 className="mb-0">Question</h5>
-        </div>
-        <div className="card-body bg-white">
-          <p className="fs-5">{post.body}</p>
-          <p className="text-muted mb-1">
-            <strong>Author:</strong> {post.authorInfo.username}
-          </p>
-          <p className="text-muted">
-            <strong>Total Answers:</strong> {post.totalAnswer}
-          </p>
+
+      <div className="card bg-base-100 shadow-xl border border-primary/20 overflow-hidden">
+        <div className="bg-primary text-primary-content p-4 font-bold">Question Content</div>
+        <div className="card-body">
+          <p className="text-2xl font-medium mb-6">{post.body}</p>
+          <div className="flex flex-wrap gap-4">
+            <div className="badge badge-outline gap-2 p-3">
+              <span className="opacity-60 text-xs uppercase font-bold">Author</span>
+              <span className="font-bold">{post.authorInfo.username}</span>
+            </div>
+            <div className="badge badge-secondary gap-2 p-3">
+              <span className="opacity-80 text-xs uppercase font-bold">Total Answers</span>
+              <span className="font-bold">{post.totalAnswer}</span>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="mt-4">
-        <h5 className="text-primary">Answers</h5>
-        {post.answers.length > 0 ? (
-          post.answers.map((data, index) => (
-            <div key={index} className="card mb-3 border-light shadow-sm">
-              <div className="card-body">
-                <p className="mb-1">{data.content}</p>
-                <small className="text-muted">— {data.authorInfo?.username}</small>
-                <div className="mt-2">
+
+      <div className="space-y-6">
+        <h4 className="text-xl font-bold text-primary flex items-center gap-2">
+          Answers Management
+          <div className="badge badge-outline">{post.answers.length}</div>
+        </h4>
+
+        <div className="grid gap-4">
+          {post.answers.length > 0 ? (
+            post.answers.map((data, index) => (
+              <div key={index} className="card bg-base-200 shadow-sm border border-base-300">
+                <div className="card-body flex-row justify-between items-center gap-4">
+                  <div className="flex-1">
+                    <p className="text-lg mb-2">{data.content}</p>
+                    <span className="text-sm opacity-60 font-medium">
+                      — {data.authorInfo?.username}
+                    </span>
+                  </div>
                   <Button
-                    className="btn-danger btn-sm"
+                    className="btn-error btn-sm btn-outline"
                     onClick={() => handleAnswerDelete(data._id)}
                     disabled={loading}
                   >
-                    Delete
+                    Delete Answer
                   </Button>
                 </div>
               </div>
+            ))
+          ) : (
+            <div className="text-center py-12 bg-base-200 rounded-xl border border-dashed border-base-300 opacity-50">
+              No answers yet for this post.
             </div>
-          ))
-        ) : (
-          <p className="text-muted">No answers yet.</p>
-        )}
+          )}
+        </div>
       </div>
     </div>
   ) : (
-    <Loading />
+    <div className="p-20">
+      <Loading />
+    </div>
   );
 }

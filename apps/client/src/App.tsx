@@ -30,15 +30,13 @@ function App() {
   }, []);
 
   return (
-    <>
-      <div className="app-container">
-        <Header />
-        <main className="container app-content">
-          <Outlet />
-        </main>
-        <Footer />
-      </div>
-    </>
+    <div className="min-h-screen flex flex-col bg-base-100">
+      <Header />
+      <main className="container mx-auto px-4 flex-1 py-6">
+        <Outlet />
+      </main>
+      <Footer />
+    </div>
   );
 }
 

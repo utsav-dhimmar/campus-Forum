@@ -47,35 +47,59 @@ export default function MyPost() {
   }, [posts]);
 
   return (
-    <div className="container">
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
       {loading ? (
         <Loading />
       ) : (
-        <>
-          <p className="text-center mt-2">
-            Total <span className="rounded-2 p-1 badge text-bg-primary">{totalPost}</span>{" "}
-            {totalPost === 1 ? "post" : "posts"} found
-          </p>
-          {message && <div className="alert alert-danger">{message}</div>}
-          {posts.map((post) => (
-            <div key={post._id} className="mt-2">
-              <div className="card bg-light border-secondary">
+        <div className="flex flex-col gap-6">
+          <div className="flex justify-center">
+            <div className="badge badge-primary badge-outline badge-lg p-4 gap-2">
+              Total <span className="font-bold">{totalPost}</span>{" "}
+              {totalPost === 1 ? "post" : "posts"} found
+            </div>
+          </div>
+
+          {message && (
+            <div className="alert alert-error shadow-lg">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-current flex-shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span>{message}</span>
+            </div>
+          )}
+
+          <div className="grid gap-6">
+            {posts.map((post) => (
+              <div key={post._id} className="card bg-base-100 shadow-xl border border-base-200">
                 <div className="card-body">
-                  <p className="card-text">{post.body}</p>
-                  <div className="p-2 d-flex gap-2">
+                  <p className="text-lg leading-relaxed">{post.body}</p>
+                  <div className="card-actions justify-end mt-4 items-center gap-4">
                     <Link to={`/posts/${post._id}`}>
-                      <Button className="btn btn-primary">Check answers</Button>
+                      <Button className="btn-primary btn-sm">Check answers</Button>
                     </Link>
 
-                    <Button className="btn btn-danger" onClick={() => handleClick(post._id)}>
+                    <Button
+                      className="btn-error btn-sm btn-outline"
+                      onClick={() => handleClick(post._id)}
+                    >
                       Delete
                     </Button>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );

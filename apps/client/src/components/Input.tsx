@@ -9,14 +9,14 @@ export default function Input(props: InputProps) {
   const { label, type = "text", divClassName = "", inputClassName = "", ...rest } = props;
 
   return (
-    <div className={`mb-3 ${divClassName}`}>
-      <label htmlFor={label} className="form-label">
-        {label}
+    <div className={`form-control w-full ${divClassName}`}>
+      <label htmlFor={label} className="label">
+        <span className="label-text font-medium">{label}</span>
       </label>
       <input
         id={label}
         type={type}
-        className={`form-control ${inputClassName}`}
+        className={`input input-bordered w-full ${inputClassName}`}
         placeholder={`Enter ${label}`}
         {...rest}
       />
