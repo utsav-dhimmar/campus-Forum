@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { Button, Loading } from "../../components/";
+import { Button, Loading, ConfirmModal } from "../../components/";
 import adminService, { type IGetAllUsersResponse } from "../../services/admin.services";
 import DeleteUsrCmp from "../../components/admin/DeleteUserCmp";
 import type { IPost } from "@repo/shared";
@@ -10,6 +10,8 @@ export default function Dashboard() {
   const [posts, setPosts] = useState<IPost[]>([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
+
+  const [postToDelete, setPostToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,18 +48,20 @@ export default function Dashboard() {
     }
   };
 
-  const handlePostDelete = async (postId: string) => {
+  const handlePostDelete = async () => {
+    if (!postToDelete) return;
     try {
       setLoading(true);
-      const res = await adminService.deletePost(postId);
+      const res = await adminService.deletePost(postToDelete);
       if (res) {
-        setPosts((currentPost) => currentPost.filter((post) => post._id !== postId));
+        setPosts((currentPost) => currentPost.filter((post) => post._id !== postToDelete));
       }
     } catch (error: any) {
       setMessage(error.message);
       console.log(error);
     } finally {
       setLoading(false);
+      setPostToDelete(null);
     }
   };
 
@@ -171,7 +175,8 @@ export default function Dashboard() {
                             </Link>
                             <Button
                               className="btn-error btn-xs btn-outline"
-                              onClick={() => handlePostDelete(post._id)}
+                              onClick={() => setPostToDelete(post._id)}
+                              disabled={loading}
                             >
                               Delete
                             </Button>
@@ -188,6 +193,16 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      <ConfirmModal
+        id="delete_post_modal"
+        isOpen={postToDelete !== null}
+        onClose={() => setPostToDelete(null)}
+        onConfirm={handlePostDelete}
+        title="Delete Post"
+        message="Are you sure you want to delete this post? This action cannot be undone."
+        isLoading={loading}
+      />
     </div>
   );
 }

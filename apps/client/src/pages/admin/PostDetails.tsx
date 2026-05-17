@@ -1,7 +1,7 @@
-import { useParams } from "react-router";
+import { useParams, Link } from "react-router";
 import { useEffect, useState } from "react";
 import adminService from "../../services/admin.services";
-import { Button, Loading, AlertMessage } from "../../components";
+import { Button, Loading, AlertMessage, ConfirmModal } from "../../components";
 import type { IPostDetails } from "@repo/shared";
 
 export default function PostDetails() {
@@ -9,6 +9,7 @@ export default function PostDetails() {
   const [post, setPost] = useState<IPostDetails | null>(null);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [answerToDelete, setAnswerToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     if (postId) {
@@ -19,16 +20,17 @@ export default function PostDetails() {
     }
   }, [postId]);
 
-  const handleAnswerDelete = async (answerId: string) => {
+  const handleAnswerDelete = async () => {
+    if (!answerToDelete) return;
     try {
       setLoading(true);
-      const res = await adminService.deleteAnswer(answerId);
+      const res = await adminService.deleteAnswer(answerToDelete);
       if (res && post) {
         setPost((currentPost) => {
           if (!currentPost) return null;
           return {
             ...currentPost,
-            answers: currentPost.answers.filter((answer) => answer._id !== answerId),
+            answers: currentPost.answers.filter((answer) => answer._id !== answerToDelete),
           };
         });
       }
@@ -37,6 +39,7 @@ export default function PostDetails() {
       console.log(error);
     } finally {
       setLoading(false);
+      setAnswerToDelete(null);
     }
   };
 
@@ -100,7 +103,7 @@ export default function PostDetails() {
                   </div>
                   <Button
                     className="btn-error btn-sm btn-outline"
-                    onClick={() => handleAnswerDelete(data._id)}
+                    onClick={() => setAnswerToDelete(data._id)}
                     disabled={loading}
                   >
                     Delete Answer
@@ -115,6 +118,16 @@ export default function PostDetails() {
           )}
         </div>
       </div>
+
+      <ConfirmModal
+        id="delete_answer_modal"
+        isOpen={answerToDelete !== null}
+        onClose={() => setAnswerToDelete(null)}
+        onConfirm={handleAnswerDelete}
+        title="Delete Answer"
+        message="Are you sure you want to delete this answer? This action cannot be undone."
+        isLoading={loading}
+      />
     </div>
   ) : (
     <div className="p-20">

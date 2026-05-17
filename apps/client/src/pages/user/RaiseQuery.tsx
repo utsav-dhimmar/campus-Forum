@@ -51,7 +51,7 @@ export default function RaiseQuery() {
           )}
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-            <div className="form-control w-full flex flex-col items-center ">
+            <div className="form-control w-full flex flex-col">
               <label htmlFor="query" className="label px-0 py-1">
                 <span className="label-text font-bold text-primary uppercase tracking-wider text-xs">
                   Your Detailed Question

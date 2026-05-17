@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Loading, Button } from "../../components";
+import { Loading, Button, ConfirmModal } from "../../components";
 import { Link, Navigate } from "react-router";
 import answerService from "../../services/answer.services";
 import type { IMyAnswerResponse } from "@repo/shared";
@@ -10,20 +10,24 @@ export default function MyAnswer() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [totalPost, setTotalPost] = useState(0);
+  const [answerToDelete, setAnswerToDelete] = useState<string | null>(null);
 
   const { data } = useAuthStore();
 
-  const handleClick = async (answerId: string) => {
+  const handleClick = async () => {
+    if (!answerToDelete) return;
     try {
-      const res = await answerService.deleteAnswer(answerId);
+      const res = await answerService.deleteAnswer(answerToDelete);
       if (res) {
         setAnswers((currentAns) => {
-          return currentAns.filter((ans) => ans._id !== answerId);
+          return currentAns.filter((ans) => ans._id !== answerToDelete);
         });
       }
     } catch (error: any) {
       setMessage(error.message);
       console.error(error);
+    } finally {
+      setAnswerToDelete(null);
     }
   };
 
@@ -53,7 +57,7 @@ export default function MyAnswer() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="mx-auto px-4 py-8 max-w-4xl">
       {loading ? (
         <Loading />
       ) : (
@@ -95,7 +99,7 @@ export default function MyAnswer() {
                     </Link>
                     <Button
                       className="btn-error btn-sm btn-outline"
-                      onClick={() => handleClick(answer._id)}
+                      onClick={() => setAnswerToDelete(answer._id)}
                     >
                       Delete
                     </Button>
@@ -106,6 +110,14 @@ export default function MyAnswer() {
           </div>
         </div>
       )}
+      <ConfirmModal
+        id="delete_my_answer_modal"
+        isOpen={answerToDelete !== null}
+        onClose={() => setAnswerToDelete(null)}
+        onConfirm={handleClick}
+        title="Delete Answer"
+        message="Are you sure you want to delete this answer? This action cannot be undone."
+      />
     </div>
   );
 }

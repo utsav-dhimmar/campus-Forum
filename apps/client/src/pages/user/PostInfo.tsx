@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { Button, InlineAnswerBox, Loading } from "../../components";
+import { Button, InlineAnswerBox, Loading, ConfirmModal } from "../../components";
 import answerService from "../../services/answer.services";
 import postService from "../../services/post.services";
 import type { IPostDetails } from "@repo/shared";
@@ -18,6 +18,9 @@ export default function PostInfo() {
 
   const [post, setPost] = useState<PostState | null>(null);
   const navigate = useNavigate();
+
+  const [isPostDeleteModalOpen, setIsPostDeleteModalOpen] = useState(false);
+  const [answerToDelete, setAnswerToDelete] = useState<string | null>(null);
 
   const fetchPost = useCallback(async () => {
     if (!postId) return;
@@ -45,6 +48,7 @@ export default function PostInfo() {
       const res = await postService.deleteAPost(postId);
       if (res) {
         setMessage("Post deleted successfully.");
+        setIsPostDeleteModalOpen(false);
         setTimeout(() => {
           navigate("/");
         }, 2000);
@@ -52,19 +56,20 @@ export default function PostInfo() {
     } catch (error: any) {
       setMessage(error.message);
       setLoading(false);
-    } finally {
-      setLoading(false);
+      setIsPostDeleteModalOpen(false);
     }
   };
 
-  const handleAnswerDelete = async (answerId: string) => {
+  const handleAnswerDelete = async () => {
+    if (!answerToDelete) return;
     try {
       setLoading(true);
-      await answerService.deleteAnswer(answerId);
+      await answerService.deleteAnswer(answerToDelete);
+      setAnswerToDelete(null);
       fetchPost();
     } catch (error: any) {
       setMessage(error.message);
-    } finally {
+      setAnswerToDelete(null);
       setLoading(false);
     }
   };
@@ -103,7 +108,7 @@ export default function PostInfo() {
     (userData._id === post.authorId || userData.role === "MODERATOR" || userData.role === "ADMIN");
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className=" mx-auto px-4 py-8 max-w-4xl">
       {message && (
         <div className="alert alert-error shadow-lg mb-6">
           <div>
@@ -129,7 +134,11 @@ export default function PostInfo() {
         <div className="bg-primary text-primary-content p-4 flex justify-between items-center">
           <h2 className="text-xl font-bold">Question</h2>
           {canDeletePost && (
-            <Button className="btn-error btn-xs" onClick={handlePostDelete} disabled={loading}>
+            <Button
+              className="btn-error btn-xs"
+              onClick={() => setIsPostDeleteModalOpen(true)}
+              disabled={loading}
+            >
               Delete Post
             </Button>
           )}
@@ -192,7 +201,7 @@ export default function PostInfo() {
                       {canDeleteAnswer && !isDeletedByMod && (
                         <Button
                           className="btn-ghost btn-error btn-xs"
-                          onClick={() => handleAnswerDelete(data._id)}
+                          onClick={() => setAnswerToDelete(data._id)}
                           disabled={loading}
                         >
                           Delete
@@ -210,6 +219,24 @@ export default function PostInfo() {
           )}
         </div>
       </div>
+
+      <ConfirmModal
+        id="delete_post_modal_info"
+        isOpen={isPostDeleteModalOpen}
+        onClose={() => setIsPostDeleteModalOpen(false)}
+        onConfirm={handlePostDelete}
+        title="Delete Post"
+        message="Are you sure you want to delete this post? This action cannot be undone."
+      />
+
+      <ConfirmModal
+        id="delete_answer_modal_info"
+        isOpen={answerToDelete !== null}
+        onClose={() => setAnswerToDelete(null)}
+        onConfirm={handleAnswerDelete}
+        title="Delete Answer"
+        message="Are you sure you want to delete this answer? This action cannot be undone."
+      />
     </div>
   );
 }

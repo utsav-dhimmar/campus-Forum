@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import postService from "../../services/post.services";
-import { Loading, Button } from "../../components";
+import { Loading, Button, ConfirmModal } from "../../components";
 import { Link, useNavigate } from "react-router";
 import type { IPost } from "@repo/shared";
 
@@ -10,18 +10,22 @@ export default function MyPost() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [totalPost, setTotalPost] = useState(0);
+  const [postToDelete, setPostToDelete] = useState<string | null>(null);
 
-  const handleClick = async (postId: string) => {
+  const handleClick = async () => {
+    if (!postToDelete) return;
     try {
-      const res = await postService.deleteAPost(postId);
+      const res = await postService.deleteAPost(postToDelete);
       if (res) {
         setPosts((currentPost) => {
-          return currentPost.filter((post) => post._id !== postId);
+          return currentPost.filter((post) => post._id !== postToDelete);
         });
       }
     } catch (error: any) {
       console.log(error);
       setMessage(error.message);
+    } finally {
+      setPostToDelete(null);
     }
   };
 
@@ -47,7 +51,7 @@ export default function MyPost() {
   }, [posts]);
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="mx-auto px-4 py-8 max-w-4xl">
       {loading ? (
         <Loading />
       ) : (
@@ -90,7 +94,7 @@ export default function MyPost() {
 
                     <Button
                       className="btn-error btn-sm btn-outline"
-                      onClick={() => handleClick(post._id)}
+                      onClick={() => setPostToDelete(post._id)}
                     >
                       Delete
                     </Button>
@@ -101,6 +105,14 @@ export default function MyPost() {
           </div>
         </div>
       )}
+      <ConfirmModal
+        id="delete_my_post_modal"
+        isOpen={postToDelete !== null}
+        onClose={() => setPostToDelete(null)}
+        onConfirm={handleClick}
+        title="Delete Post"
+        message="Are you sure you want to delete this post? This action cannot be undone."
+      />
     </div>
   );
 }

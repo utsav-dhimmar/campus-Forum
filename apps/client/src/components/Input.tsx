@@ -9,8 +9,8 @@ export default function Input(props: InputProps) {
   const { label, type = "text", divClassName = "", inputClassName = "", ...rest } = props;
 
   return (
-    <div className={`form-control w-full ${divClassName}`}>
-      <label htmlFor={label} className="label">
+    <div className={`form-control w-full flex flex-col ${divClassName}`}>
+      <label htmlFor={label} className="label px-0">
         <span className="label-text font-medium">{label}</span>
       </label>
       <input

@@ -136,8 +136,8 @@ export default function UserDetails() {
           <div className="card bg-base-100 shadow-xl border border-base-200">
             <div className="card-body">
               <h3 className="card-title text-xl mb-6">Modify Access Permissions</h3>
-              <div className="form-control w-full">
-                <label className="label">
+              <div className="form-control w-full flex flex-col">
+                <label className="label px-0">
                   <span className="label-text font-bold">Assign New Role</span>
                 </label>
                 <div className="flex gap-4">

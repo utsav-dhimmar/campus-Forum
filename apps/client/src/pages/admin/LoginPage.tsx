@@ -98,7 +98,7 @@ export default function LoginPage() {
 
         <div className="card-body p-8">
           <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-            <div className="form-control">
+            <div className="form-control flex flex-col">
               <Input
                 label="Email"
                 type="email"
@@ -110,7 +110,7 @@ export default function LoginPage() {
               {errors.email && <AlertMessage text={errors.email} />}
             </div>
 
-            <div className="form-control">
+            <div className="form-control flex flex-col">
               <Input
                 label="Password"
                 type="password"

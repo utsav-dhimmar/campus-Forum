@@ -1,6 +1,5 @@
 import answerService from "@/services/answer.services";
 import { useState } from "react";
-import AlertMessage from "./AlertMessage";
 
 type InlineAnswerBoxProps = {
   postId: string;
@@ -55,18 +54,18 @@ export default function InlineAnswerBox({ postId, onAnswerSubmit }: InlineAnswer
   return (
     <div className="mt-6 bg-base-100 p-4 rounded-lg shadow-sm border border-base-200">
       <form onSubmit={handleSubmit}>
-        <div className="form-control w-full mb-4">
-          <label className="label">
+        <div className="form-control w-full mb-4 flex flex-col">
+          <label className="label px-0">
             <span className="label-text font-semibold">Your Answer</span>
           </label>
           <textarea
-            className={`textarea textarea-bordered h-24 ${validationError ? "textarea-error" : "textarea-primary"}`}
+            className={`textarea textarea-bordered h-24 w-full ${validationError ? "textarea-error" : "textarea-primary"}`}
             placeholder="Write your answer clearly..."
             value={content}
             onChange={handleContentChange}
           ></textarea>
           {validationError && (
-            <label className="label">
+            <label className="label px-0">
               <span className="label-text-alt text-error">{validationError}</span>
             </label>
           )}

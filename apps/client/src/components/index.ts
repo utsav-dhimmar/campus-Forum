@@ -3,6 +3,7 @@ import AuthComponent from "./AuthComponent";
 import AuthNavigation from "./AuthNavigation";
 import Button from "./Button";
 import CardComponents from "./CardComponents";
+import ConfirmModal from "./ConfirmModal";
 import Footer from "./Footer";
 import GuestOnly from "./GuestOnly";
 import Header from "./Header";
@@ -17,6 +18,7 @@ export {
   AuthNavigation,
   Button,
   CardComponents,
+  ConfirmModal,
   Footer,
   GuestOnly,
   Header,

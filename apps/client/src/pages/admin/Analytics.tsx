@@ -46,8 +46,8 @@ export default function Analytics() {
           fetchData();
         }}
       >
-        <div className="form-control w-full">
-          <label className="label">
+        <div className="form-control w-full flex flex-col">
+          <label className="label px-0">
             <span className="label-text font-bold">Start Date</span>
           </label>
           <input
@@ -57,8 +57,8 @@ export default function Analytics() {
             onChange={(e) => setStartDate(e.target.value)}
           />
         </div>
-        <div className="form-control w-full">
-          <label className="label">
+        <div className="form-control w-full flex flex-col">
+          <label className="label px-0">
             <span className="label-text font-bold">End Date</span>
           </label>
           <input
