@@ -6,7 +6,10 @@ import DeleteUsrCmp from "../../components/admin/DeleteUserCmp";
 import type { IPost } from "@repo/shared";
 
 export default function Dashboard() {
-  const [users, setUsers] = useState<IGetAllUsersResponse>({ users: [], totalUsers: [] });
+  const [users, setUsers] = useState<IGetAllUsersResponse>({
+    users: [],
+    totalUsers: [],
+  });
   const [posts, setPosts] = useState<IPost[]>([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
@@ -124,7 +127,7 @@ export default function Dashboard() {
                           <div className="flex justify-end gap-2">
                             <Link
                               to={`/admin/user/${user._id}`}
-                              className="btn btn-xs btn-outline btn-primary"
+                              className="btn btn-sm btn-outline btn-primary"
                             >
                               View
                             </Link>

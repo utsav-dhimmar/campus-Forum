@@ -1,11 +1,10 @@
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { AlertMessage, Button, Input } from "../../components";
 import adminService from "../../services/admin.services";
-import { useNavigate } from "react-router";
+import { Navigate } from "react-router";
 import type { UserLogin } from "@repo/shared";
 import { useAuthStore } from "@/store/useAuthStore";
 export default function LoginPage() {
-  const navigate = useNavigate();
   const { login, data } = useAuthStore();
 
   const [userData, setUserData] = useState<UserLogin>({
@@ -64,11 +63,9 @@ export default function LoginPage() {
     }
   };
 
-  useEffect(() => {
-    if (data?.role === "ADMIN") {
-      navigate("/admin", { replace: true });
-    }
-  }, [data, navigate]);
+  if (data?.role === "ADMIN") {
+    return <Navigate to="/admin" replace />;
+  }
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     const email = e.target.value;

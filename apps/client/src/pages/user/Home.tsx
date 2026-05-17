@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router";
+import { Navigate } from "react-router";
 import { AlertMessage, CardComponents, Loading } from "@/components";
 import postService from "@/services/post.services";
 import type { IPostWithAuthor } from "@repo/shared";
@@ -12,7 +12,6 @@ export default function HomePage() {
   const [totalPost, setTotalPost] = useState(0);
 
   const { data } = useAuthStore();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,14 +40,12 @@ export default function HomePage() {
     setTotalPost(posts.length);
   }, [posts]);
 
-  useEffect(() => {
-    if (data?.role === "ADMIN") {
-      navigate("/admin");
-    }
-  }, [data, navigate]);
-
   if (!data) {
     return <Navigate to={"/no-logged-in"} replace />;
+  }
+
+  if (data.role === "ADMIN") {
+    return <Navigate to="/admin" replace />;
   }
 
   return (

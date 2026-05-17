@@ -18,7 +18,7 @@ function Logout({ onClick }: LogoutProps) {
 }
 export default function AdminApp() {
   const [message, setMessage] = useState("");
-  const { login, logout } = useAuthStore();
+  const { logout } = useAuthStore();
 
   const navigate = useNavigate();
   const handleClick = async () => {
@@ -33,16 +33,6 @@ export default function AdminApp() {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    const userData = localStorage.getItem("userData");
-    const user = userData ? JSON.parse(userData) : null;
-    if (user) {
-      login(user);
-    } else {
-      logout();
-    }
-  }, [login, logout]);
 
   return (
     <div className="min-h-screen bg-base-200 flex flex-col">

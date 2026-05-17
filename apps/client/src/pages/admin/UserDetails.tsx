@@ -166,7 +166,7 @@ export default function UserDetails() {
             </div>
           </div>
 
-          <div className="bg-warning/10 border border-warning/20 p-6 rounded-2xl text-warning-content text-sm italic">
+          <div className="bg-warning/10 border border-warning/20 p-6 rounded-2xl text-sm italic">
             <p>
               <strong>Security Note:</strong> Deleting a user account is permanent and will remove
               all associated data including posts and answers.

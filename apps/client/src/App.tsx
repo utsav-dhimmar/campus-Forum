@@ -5,29 +5,28 @@ import authService from "@/services/auth.services";
 import { useAuthStore } from "@/store/useAuthStore";
 
 function App() {
-  const { login, logout } = useAuthStore();
+  const { login, logout, data } = useAuthStore();
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("userData")!) ?? false;
-    if (user) {
-      login(user);
-    } else {
+    if (!data) {
       authService
         .getUserInfo()
         .then((res) => {
-          return res
-            ? login({
-                _id: res._id,
-                username: res.username,
-                role: res.role,
-              })
-            : logout();
+          if (res) {
+            login({
+              _id: res._id,
+              username: res.username,
+              role: res.role,
+            });
+          } else {
+            logout();
+          }
         })
         .catch((reason) => {
           console.log(reason);
         });
     }
-  }, []);
+  }, [data, login, logout]);
 
   return (
     <div className="min-h-screen flex flex-col bg-base-100">

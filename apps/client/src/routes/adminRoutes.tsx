@@ -6,28 +6,27 @@ import {
   PostDetails,
   UserDetails,
 } from "../pages/admin";
-import { Outlet, Route, useLocation, useNavigate } from "react-router";
-import { useEffect } from "react";
+import { Navigate, Outlet, Route, useLocation } from "react-router";
 import { useAuthStore } from "@/store/useAuthStore";
 
 export default function AdminProtected() {
   const { pathname } = useLocation();
-  const navigate = useNavigate();
   const { data: userData } = useAuthStore();
 
   const isAuthenticate = !!userData;
 
-  useEffect(() => {
-    if (!isAuthenticate) {
-      navigate("/", { replace: true });
-    } else if (isAuthenticate && userData?.role?.toLowerCase() !== "admin") {
-      navigate("/", { replace: true });
-    } else if (isAuthenticate && pathname === "/admin-login") {
-      navigate("/admin", { replace: true });
-    }
-  }, [userData, pathname, navigate]);
+  if (!isAuthenticate) {
+    return <Navigate to="/" replace />;
+  }
 
-  // console.log(userData, isAuthenticate);
+  if (userData?.role?.toLowerCase() !== "admin") {
+    return <Navigate to="/" replace />;
+  }
+
+  if (pathname === "/admin-login") {
+    return <Navigate to="/admin" replace />;
+  }
+
   return <Outlet />;
 }
 
