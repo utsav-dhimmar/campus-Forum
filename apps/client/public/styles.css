@@ -3,23 +3,20 @@ body {
   height: 100%;
   margin: 0;
 }
+
 .app-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
+
 .app-content {
   flex-grow: 1;
 }
-.footer {
-  background-color: #f8f9fa;
-  padding: 1rem 0;
-  text-align: center;
-  border-top: 1px solid #e7e7e7;
-}
-.card:hover {
+
+/* .card:hover {
   box-shadow: 2px 2px 2px 0px #989191;
   transition:
     box-shadow 0.3s ease,
     transform 0.3s ease;
-}
+} */

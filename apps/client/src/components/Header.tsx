@@ -7,7 +7,7 @@ type LogoutProps = { onClick: () => void };
 
 function Logout({ onClick }: LogoutProps) {
   return (
-    <Button type="button" onClick={onClick} className="btn btn-danger btn-sm">
+    <Button type="button" onClick={onClick} className="btn btn-error btn-sm">
       Logout
     </Button>
   );
@@ -34,33 +34,31 @@ export default function Header() {
   ];
 
   return (
-    <header>
-      <nav className="navbar bg-light shadow-sm rounded m-2 p-3">
-        <div className="container-fluid d-flex flex-column flex-md-row justify-content-md-between align-items-center">
-          {/* Brand and Moderator Badge */}
-          <div className="d-flex align-items-center mb-3 mb-md-0">
-            <Link to="/" className="navbar-brand fw-bold text-primary fs-4">
-              Campus Forum
-            </Link>
-            {data?.role === "MODERATOR" && (
-              <span className="badge bg-info text-dark ms-2">{data.role}</span>
-            )}
-          </div>
+    <header className="p-2">
+      <nav className="navbar bg-base-100 shadow-md rounded-box px-4">
+        <div className="flex-1">
+          <Link to="/" className="btn btn-ghost text-xl font-bold text-primary normal-case">
+            Campus Forum
+          </Link>
+          {data?.role === "MODERATOR" && (
+            <span className="badge badge-info gap-2 ml-2">{data.role}</span>
+          )}
+        </div>
 
-          {/* Navigation Links */}
-          <ul className="nav d-flex flex-column flex-md-row align-items-center gap-2">
+        <div className="flex-none">
+          <ul className="menu menu-horizontal px-1 gap-2 items-center">
             {navItems.map(
               (item) =>
                 item.isActive && (
-                  <li className="nav-item" key={item.name}>
-                    <Link className="nav-link" to={item.path}>
+                  <li key={item.name}>
+                    <Link to={item.path} className="rounded-lg">
                       {item.name}
                     </Link>
                   </li>
                 ),
             )}
             {data && (
-              <li className="nav-item mt-2 mt-md-0 ms-md-2">
+              <li>
                 <Logout onClick={handleClick} />
               </li>
             )}

@@ -60,9 +60,7 @@ export default function LoginPage() {
       }
     } catch (error: any) {
       console.log(error);
-      setMessage(
-        error.message || "An unexpected error occurred. Please try again.",
-      );
+      setMessage(error.message || "An unexpected error occurred. Please try again.");
     }
   };
 
@@ -91,56 +89,51 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-vh-100 bg-light d-flex align-items-center justify-content-center">
-      <div className="container">
-        <div className="row justify-content-center">
-          <div className="col-12 col-md-8 col-lg-6 col-xl-5">
-            <div className="card shadow-lg border-0 rounded-4">
-              <div className="card-header bg-primary text-white text-center py-3">
-                <h3 className="mb-0">Admin Login</h3>
-              </div>
+    <div className="min-h-screen bg-base-200 flex items-center justify-center p-4">
+      <div className="card w-full max-w-md bg-base-100 shadow-2xl border border-base-300">
+        <div className="bg-primary text-primary-content p-6 text-center">
+          <h2 className="text-3xl font-bold">Admin Portal</h2>
+          <p className="opacity-80 text-sm mt-1">Authorized Access Only</p>
+        </div>
 
-              <div className="card-body p-4">
-                <form onSubmit={handleSubmit}>
-                  <div className="mb-3">
-                    <Input
-                      label="email"
-                      type="email"
-                      required
-                      autoComplete="email"
-                      value={userData.email}
-                      onChange={handleEmailChange}
-                    />
-                    {errors.email && <AlertMessage text={errors.email} />}
-                  </div>
-
-                  <div className="mb-3">
-                    <Input
-                      label="password"
-                      type="password"
-                      required
-                      autoComplete="current-password"
-                      value={userData.password}
-                      onChange={handlePasswordChange}
-                    />
-                    {errors.password && <AlertMessage text={errors.password} />}
-                  </div>
-
-                  <Button className="btn-primary w-100 mb-3" type="submit">
-                    Login !!
-                  </Button>
-
-                  {message && <AlertMessage text={message} />}
-                </form>
-              </div>
-
-              <div className="card-footer text-center py-2">
-                <small className="text-muted">
-                  For authorized personnel only
-                </small>
-              </div>
+        <div className="card-body p-8">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+            <div className="form-control flex flex-col">
+              <Input
+                label="Email"
+                type="email"
+                required
+                autoComplete="email"
+                value={userData.email}
+                onChange={handleEmailChange}
+              />
+              {errors.email && <AlertMessage text={errors.email} />}
             </div>
-          </div>
+
+            <div className="form-control flex flex-col">
+              <Input
+                label="Password"
+                type="password"
+                required
+                autoComplete="current-password"
+                value={userData.password}
+                onChange={handlePasswordChange}
+              />
+              {errors.password && <AlertMessage text={errors.password} />}
+            </div>
+
+            <div className="card-actions mt-4">
+              <Button className="btn-primary w-full btn-lg" type="submit">
+                Access Dashboard
+              </Button>
+            </div>
+
+            {message && <AlertMessage text={message} autoHide={false} />}
+          </form>
+        </div>
+
+        <div className="p-4 bg-base-200 text-center text-xs opacity-60">
+          <p>Personnel are responsible for maintaining confidentiality of credentials.</p>
         </div>
       </div>
     </div>

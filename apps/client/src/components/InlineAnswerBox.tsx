@@ -1,6 +1,5 @@
 import answerService from "@/services/answer.services";
 import { useState } from "react";
-import AlertMessage from "./AlertMessage";
 
 type InlineAnswerBoxProps = {
   postId: string;
@@ -53,27 +52,40 @@ export default function InlineAnswerBox({ postId, onAnswerSubmit }: InlineAnswer
   // }
 
   return (
-    <div className="mt-4">
+    <div className="mt-6 bg-base-100 p-4 rounded-lg shadow-sm border border-base-200">
       <form onSubmit={handleSubmit}>
-        <div className="mb-2">
+        <div className="form-control w-full mb-4 flex flex-col">
+          <label className="label px-0">
+            <span className="label-text font-semibold">Your Answer</span>
+          </label>
           <textarea
-            className={`form-control ${validationError ? "border-danger" : "border-primary"}`}
-            rows={3}
-            placeholder="Write your answer..."
+            className={`textarea textarea-bordered h-24 w-full ${validationError ? "textarea-error" : "textarea-primary"}`}
+            placeholder="Write your answer clearly..."
             value={content}
             onChange={handleContentChange}
           ></textarea>
-          {validationError && <AlertMessage text={validationError} autoHide={true} />}
+          {validationError && (
+            <label className="label px-0">
+              <span className="label-text-alt text-error">{validationError}</span>
+            </label>
+          )}
         </div>
-        <div className="d-flex justify-content-between align-items-center">
+        <div className="flex justify-between items-center gap-4">
           <button
             type="submit"
-            className="btn btn-primary btn-sm"
+            className={`btn btn-primary btn-sm ${loading ? "btn-disabled" : ""}`}
             disabled={loading || content.trim().length < 10}
           >
-            {loading ? "Posting..." : "Post Answer"}
+            {loading ? (
+              <>
+                <span className="loading loading-spinner loading-xs"></span>
+                Posting...
+              </>
+            ) : (
+              "Post Answer"
+            )}
           </button>
-          {message && <small className="text-muted ms-3">{message}</small>}
+          {message && <span className="text-sm opacity-60 italic">{message}</span>}
         </div>
       </form>
     </div>
