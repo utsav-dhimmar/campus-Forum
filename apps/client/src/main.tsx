@@ -17,7 +17,9 @@ import {
 } from "@/pages/user/index.ts";
 
 import { adminRoutes } from "@/routes/adminRoutes.tsx";
-
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/utils/queryClient";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
@@ -50,6 +52,9 @@ const router = createBrowserRouter(
 // console.log(router.state);
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+      <ReactQueryDevtools />
+    </QueryClientProvider>
   </StrictMode>,
 );

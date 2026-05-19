@@ -1,41 +1,19 @@
-import { useEffect, useState } from "react";
-import authService from "@/services/auth.services";
 import { Loading } from "@/components";
-import type { IUser } from "@repo/shared";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function AboutMe() {
-  const [userData, setUserData] = useState<IUser | null>(null);
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const res = await authService.getUserInfo();
-        setUserData(res);
-      } catch (error) {
-        setMessage(
-          (error instanceof Error && error.message) || "Could not fetch user information.",
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
+  const { data: userData, isLoading: loading, error } = useAuth();
   return (
     <div className="container mx-auto px-4 py-12 max-w-2xl">
       <h1 className="text-4xl font-extrabold text-center mb-10 text-primary">About Me</h1>
 
       {loading && <Loading />}
 
-      {message && !loading && (
+      {error && !loading && (
         <div className="alert alert-error shadow-lg mb-6">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="stroke-current flex-shrink-0 h-6 w-6"
+            className="stroke-current shrink-0 h-6 w-6"
             fill="none"
             viewBox="0 0 24 24"
           >
@@ -46,11 +24,11 @@ export default function AboutMe() {
               d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <span>{message}</span>
+          <span>{error.message}</span>
         </div>
       )}
 
-      {!loading && !message && userData && Object.keys(userData).length > 0 && (
+      {!loading && !error && userData && Object.keys(userData).length > 0 && (
         <div className="card bg-base-100 shadow-2xl border border-base-200 overflow-hidden">
           <div className="bg-primary text-primary-content p-4 font-bold text-center uppercase tracking-widest text-sm">
             User Profile

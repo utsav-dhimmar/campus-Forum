@@ -1,78 +1,58 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Button, InlineAnswerBox, Loading, ConfirmModal } from "../../components";
-import answerService from "../../services/answer.services";
-import postService from "../../services/post.services";
+
 import type { IPostDetails } from "@repo/shared";
 import { useAuthStore } from "@/store/useAuthStore";
+import { usePost } from "@/hooks/usePosts";
+import { useDeletePost } from "@/hooks/mutations/usePost";
+import { useDeleteAnswer } from "@/hooks/mutations/useAnswer";
 
 interface PostState extends IPostDetails {
   question: string;
 }
 
 export default function PostInfo() {
-  const { postId } = useParams<{ postId: string }>();
-  const { data: userData } = useAuthStore();
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(true);
-
-  const [post, setPost] = useState<PostState | null>(null);
   const navigate = useNavigate();
+  const { data: userData } = useAuthStore();
+
+  const { postId } = useParams<{ postId: string }>();
+  const { data: post, isLoading: loading, error, refetch } = usePost(postId as string);
+  const {
+    isPending: isDeletePostPending,
+    isSuccess: isDeletePostSuccess,
+    error: deletePostError,
+    mutate: deletePostMutate,
+  } = useDeletePost();
+  const {
+    isPending: isDeleteAnserPending,
+    isSuccess: isDeleteAnswerSuccess,
+    error: deleteAnswerError,
+    mutate: deleteAnswerMutate,
+  } = useDeleteAnswer();
 
   const [isPostDeleteModalOpen, setIsPostDeleteModalOpen] = useState(false);
   const [answerToDelete, setAnswerToDelete] = useState<string | null>(null);
 
-  const fetchPost = useCallback(async () => {
+  const handlePostDelete = () => {
     if (!postId) return;
-    try {
-      const data = await postService.getAPost(postId);
-      setPost({
-        ...data,
-        question: data.body,
-      });
-    } catch (error: any) {
-      setMessage(error.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [postId]);
-
-  useEffect(() => {
-    fetchPost();
-  }, [fetchPost]);
-
-  const handlePostDelete = async () => {
-    if (!postId) return;
-    try {
-      setLoading(true);
-      const res = await postService.deleteAPost(postId);
-      if (res) {
-        setMessage("Post deleted successfully.");
-        setIsPostDeleteModalOpen(false);
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
-      }
-    } catch (error: any) {
-      setMessage(error.message);
-      setLoading(false);
-      setIsPostDeleteModalOpen(false);
-    }
+    deletePostMutate(postId);
   };
 
   const handleAnswerDelete = async () => {
     if (!answerToDelete) return;
-    try {
-      setLoading(true);
-      await answerService.deleteAnswer(answerToDelete);
-      setAnswerToDelete(null);
-      fetchPost();
-    } catch (error: any) {
-      setMessage(error.message);
-      setAnswerToDelete(null);
-      setLoading(false);
-    }
+
+    deleteAnswerMutate(answerToDelete);
   };
+
+  useEffect(() => {
+    if (isDeletePostSuccess) {
+      const timer = setTimeout(() => {
+        navigate("/");
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isDeletePostSuccess, navigate]);
 
   if (loading) {
     return <Loading />;
@@ -85,7 +65,7 @@ export default function PostInfo() {
           <div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="stroke-current flex-shrink-0 h-6 w-6"
+              className="stroke-current shrink-0 h-6 w-6"
               fill="none"
               viewBox="0 0 24 24"
             >
@@ -96,7 +76,7 @@ export default function PostInfo() {
                 d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span>{message || "Could not load the post."}</span>
+            <span>{error?.message || "Could not load the post."}</span>
           </div>
         </div>
       </div>
@@ -109,12 +89,12 @@ export default function PostInfo() {
 
   return (
     <div className=" mx-auto px-4 py-8 max-w-4xl">
-      {message && (
+      {error && (
         <div className="alert alert-error shadow-lg mb-6">
           <div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="stroke-current flex-shrink-0 h-6 w-6"
+              className="stroke-current shrink-0 h-6 w-6"
               fill="none"
               viewBox="0 0 24 24"
             >
@@ -125,7 +105,7 @@ export default function PostInfo() {
                 d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span>{message}</span>
+            <span>{error.message}</span>
           </div>
         </div>
       )}
@@ -136,8 +116,8 @@ export default function PostInfo() {
           {canDeletePost && (
             <Button
               className="btn-error btn-xs"
-              onClick={() => setIsPostDeleteModalOpen(true)}
-              disabled={loading}
+              onClick={handlePostDelete}
+              disabled={isDeletePostPending}
             >
               Delete Post
             </Button>
@@ -160,7 +140,7 @@ export default function PostInfo() {
 
       {postId && (
         <div className="mt-8">
-          <InlineAnswerBox postId={postId} onAnswerSubmit={fetchPost} />
+          <InlineAnswerBox postId={postId} onAnswerSubmit={refetch} />
         </div>
       )}
 
@@ -202,7 +182,7 @@ export default function PostInfo() {
                         <Button
                           className="btn-ghost btn-error btn-xs"
                           onClick={() => setAnswerToDelete(data._id)}
-                          disabled={loading}
+                          disabled={isDeleteAnserPending}
                         >
                           Delete
                         </Button>
