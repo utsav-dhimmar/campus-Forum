@@ -1,6 +1,6 @@
-import { useState, type FormEvent } from "react";
-import { Button } from "../../components";
-import postService from "../../services/post.services";
+import { useState, type SubmitEvent } from "react";
+import { Button } from "@/components";
+import postService from "@/services/post.services";
 import { useNavigate } from "react-router";
 
 export default function RaiseQuery() {
@@ -8,8 +8,9 @@ export default function RaiseQuery() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
+
     postService
       .createPost({ body })
       .then((data) => {
